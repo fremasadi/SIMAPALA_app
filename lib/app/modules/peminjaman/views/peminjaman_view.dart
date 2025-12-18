@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:simapala/app/modules/peminjaman/views/tambah_peminjaman_view.dart';
 
 import '../../../style/app_color.dart';
 import '../controllers/peminjaman_controller.dart';
@@ -16,10 +17,7 @@ class PeminjamanView extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            AppColor.secondary,
-            AppColor.secondary.withOpacity(0.8),
-          ],
+          colors: [AppColor.secondary, AppColor.secondary.withOpacity(0.8)],
         ),
       ),
       child: SafeArea(
@@ -39,7 +37,9 @@ class PeminjamanView extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.to(TambahPeminjamanView());
+                    },
                     icon: Icon(
                       Icons.add_circle,
                       color: AppColor.primary,
@@ -97,9 +97,7 @@ class PeminjamanView extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-        ),
+        border: Border.all(color: Colors.white.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +116,10 @@ class PeminjamanView extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: statusColor.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(20),
@@ -138,11 +139,7 @@ class PeminjamanView extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Icon(
-                Icons.calendar_today,
-                color: AppColor.primary,
-                size: 16,
-              ),
+              Icon(Icons.calendar_today, color: AppColor.primary, size: 16),
               const SizedBox(width: 8),
               Text(
                 'Pinjam: $tanggalPinjam',
@@ -156,11 +153,7 @@ class PeminjamanView extends StatelessWidget {
           const SizedBox(height: 8),
           Row(
             children: [
-              Icon(
-                Icons.event,
-                color: AppColor.primary,
-                size: 16,
-              ),
+              Icon(Icons.event, color: AppColor.primary, size: 16),
               const SizedBox(width: 8),
               Text(
                 'Kembali: $tanggalKembali',

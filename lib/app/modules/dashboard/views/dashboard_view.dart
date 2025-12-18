@@ -16,10 +16,7 @@ class DashboardView extends GetView<DashboardController> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            AppColor.secondary,
-            AppColor.secondary.withOpacity(0.8),
-          ],
+          colors: [AppColor.secondary, AppColor.secondary.withOpacity(0.8)],
         ),
       ),
       child: SafeArea(
@@ -96,52 +93,6 @@ class DashboardView extends GetView<DashboardController> {
               ),
               const SizedBox(height: 30),
 
-              // Menu Grid
-              Text(
-                'Menu Utama',
-                style: TextStyle(
-                  color: AppColor.primary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1.2,
-                children: [
-                  _buildMenuCard(
-                    icon: Icons.add_shopping_cart,
-                    title: 'Pinjam Alat',
-                    color: Colors.blue,
-                    onTap: () {},
-                  ),
-                  _buildMenuCard(
-                    icon: Icons.history,
-                    title: 'Riwayat Pinjam',
-                    color: Colors.purple,
-                    onTap: () {},
-                  ),
-                  _buildMenuCard(
-                    icon: Icons.payment,
-                    title: 'Bayar Kas',
-                    color: Colors.green,
-                    onTap: () {},
-                  ),
-                  _buildMenuCard(
-                    icon: Icons.inventory_2,
-                    title: 'Daftar Alat',
-                    color: Colors.orange,
-                    onTap: () {},
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-
               // Recent Activity
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -158,37 +109,17 @@ class DashboardView extends GetView<DashboardController> {
                     onPressed: () {},
                     child: Text(
                       'Lihat Semua',
-                      style: TextStyle(
-                        color: AppColor.primary,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: AppColor.primary, fontSize: 12),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
               _buildActivityItem(
                 icon: Icons.shopping_bag,
                 title: 'Peminjaman Tenda',
                 subtitle: '2 hari yang lalu',
                 status: 'Dipinjam',
                 statusColor: Colors.orange,
-              ),
-              const SizedBox(height: 12),
-              _buildActivityItem(
-                icon: Icons.check_circle,
-                title: 'Pengembalian Carrier',
-                subtitle: '5 hari yang lalu',
-                status: 'Selesai',
-                statusColor: Colors.green,
-              ),
-              const SizedBox(height: 12),
-              _buildActivityItem(
-                icon: Icons.payment,
-                title: 'Pembayaran Kas Bulanan',
-                subtitle: '1 minggu yang lalu',
-                status: 'Lunas',
-                statusColor: Colors.blue,
               ),
             ],
           ),
@@ -208,9 +139,7 @@ class DashboardView extends GetView<DashboardController> {
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-        ),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,49 +167,6 @@ class DashboardView extends GetView<DashboardController> {
     );
   }
 
-  Widget _buildMenuCard({
-    required IconData icon,
-    required String title,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: color.withOpacity(0.3),
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: color, size: 32),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildActivityItem({
     required IconData icon,
     required String title,
@@ -293,9 +179,7 @@ class DashboardView extends GetView<DashboardController> {
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.1),
-        ),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
       ),
       child: Row(
         children: [
