@@ -1,23 +1,31 @@
 import 'package:get/get.dart';
+import 'package:simapala/app/data/model/kas_bulanan_model.dart';
+import 'package:simapala/app/data/services/kas_service.dart';
 
 class KasController extends GetxController {
-  //TODO: Implement KasController
+  final KasService _kasService = Get.find();
 
-  final count = 0.obs;
+  // Observable variables
+  var isLoading = false.obs;
+  var kasBulananList = <KasBulanan>[].obs;
+
+  /// ✅ TOTAL KAS
+  RxString totalKasFormatted = 'Rp 0'.obs;
+
   @override
   void onInit() {
     super.onInit();
+    fetchKas();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
+  void fetchKas() async {
+    isLoading.value = true;
+    await _kasService.fetchKasBulanan();
+    await _kasService.fetchTotalKas();
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
+    kasBulananList.assignAll(_kasService.kasBulananList);
+    totalKasFormatted.value = _kasService.totalKasFormatted.value;
 
-  void increment() => count.value++;
+    isLoading.value = false;
+  }
 }

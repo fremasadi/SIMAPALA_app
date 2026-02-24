@@ -18,10 +18,7 @@ class AuthService extends GetxService {
 
   /// 🔐 LOGIN
   Future<void> login(String email, String password) async {
-    final response = await _provider.login(
-      email: email,
-      password: password,
-    );
+    final response = await _provider.login(email: email, password: password);
 
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
@@ -57,11 +54,26 @@ class AuthService extends GetxService {
   }
 
   /// 🚪 LOGOUT
+  /// 🚪 LOGOUT (POST API + CLEAR LOCAL)
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+    final savedToken = prefs.getString(_tokenKey);
 
-    token.value = '';
-    user.value = null;
+    try {
+      if (savedToken != null && savedToken.isNotEmpty) {
+        final response = await _provider.logout(token: savedToken);
+
+        if (response.statusCode != 200) {
+          final body = jsonDecode(response.body);
+        }
+      }
+    } catch (e) {
+      // kalau API error, tetap lanjut clear local
+    } finally {
+      // 🔥 WAJIB: clear local state
+      await prefs.clear();
+      token.value = '';
+      user.value = null;
+    }
   }
 }

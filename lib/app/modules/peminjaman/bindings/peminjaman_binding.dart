@@ -7,11 +7,7 @@ import '../controllers/peminjaman_controller.dart';
 class PeminjamanBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<TambahPeminjamanController>(
-      () => TambahPeminjamanController(),
-    );
-    Get.lazyPut<PeminjamanController>(
-      () => PeminjamanController(),
-    );
+    Get.put(TambahPeminjamanController());
+    Get.put(PeminjamanController());
   }
 }

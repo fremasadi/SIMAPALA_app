@@ -7,7 +7,7 @@ import '../../../style/app_color.dart';
 import '../controllers/peminjaman_controller.dart';
 
 // Peminjaman Page
-class PeminjamanView extends StatelessWidget {
+class PeminjamanView extends GetView<PeminjamanController> {
   const PeminjamanView({super.key});
 
   @override
@@ -17,7 +17,10 @@ class PeminjamanView extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColor.secondary, AppColor.secondary.withOpacity(0.8)],
+          colors: [
+            AppColor.secondary,
+            AppColor.secondary.withValues(alpha: 0.8),
+          ],
         ),
       ),
       child: SafeArea(
@@ -37,8 +40,14 @@ class PeminjamanView extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {
-                      Get.to(TambahPeminjamanView());
+                    onPressed: () async {
+                      final result = await Get.to(
+                        () => const TambahPeminjamanView(),
+                      );
+
+                      if (result == true) {
+                        controller.fetchPinjaman();
+                      }
                     },
                     icon: Icon(
                       Icons.add_circle,
@@ -50,39 +59,64 @@ class PeminjamanView extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                children: [
-                  _buildPeminjamanCard(
-                    namaAlat: 'Tenda Kapasitas 4 Orang',
-                    tanggalPinjam: '10 Des 2024',
-                    tanggalKembali: '15 Des 2024',
-                    status: 'Dipinjam',
-                    statusColor: Colors.orange,
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (controller.pinjamanList.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'Belum ada peminjaman',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  );
+                }
+
+                return RefreshIndicator(
+                  onRefresh: () async => controller.fetchPinjaman(),
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemCount: controller.pinjamanList.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final pinjaman = controller.pinjamanList[index];
+
+                      return _buildPeminjamanCard(
+                        namaAlat: pinjaman.detailTransaksis.isNotEmpty
+                            ? pinjaman.detailTransaksis.first.alat.namaAlat
+                            : '-',
+                        tanggalPinjam: _formatDate(pinjaman.tanggalPinjam),
+                        tanggalKembali: _formatDate(pinjaman.tanggalKembali),
+                        status: pinjaman.status,
+                        statusColor: _getStatusColor(pinjaman.status),
+                      );
+                    },
                   ),
-                  const SizedBox(height: 12),
-                  _buildPeminjamanCard(
-                    namaAlat: 'Carrier 60L',
-                    tanggalPinjam: '8 Des 2024',
-                    tanggalKembali: '14 Des 2024',
-                    status: 'Dipinjam',
-                    statusColor: Colors.orange,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildPeminjamanCard(
-                    namaAlat: 'Sleeping Bag',
-                    tanggalPinjam: '5 Des 2024',
-                    tanggalKembali: '10 Des 2024',
-                    status: 'Dikembalikan',
-                    statusColor: Colors.green,
-                  ),
-                ],
-              ),
+                );
+              }),
             ),
           ],
         ),
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}-${date.month}-${date.year}';
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'dipinjam':
+        return Colors.orange;
+      case 'selesai':
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
   }
 
   Widget _buildPeminjamanCard({
@@ -95,9 +129,9 @@ class PeminjamanView extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.2)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,7 +155,7 @@ class PeminjamanView extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.2),
+                  color: statusColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: statusColor),
                 ),
@@ -144,7 +178,7 @@ class PeminjamanView extends StatelessWidget {
               Text(
                 'Pinjam: $tanggalPinjam',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 13,
                 ),
               ),
@@ -158,7 +192,7 @@ class PeminjamanView extends StatelessWidget {
               Text(
                 'Kembali: $tanggalKembali',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 13,
                 ),
               ),

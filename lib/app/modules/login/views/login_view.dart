@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 import '../../../style/app_color.dart';
 import '../controllers/login_controller.dart';
 
-
-
 class LoginView extends GetView<LoginController> {
   const LoginView({super.key});
 
@@ -23,7 +21,7 @@ class LoginView extends GetView<LoginController> {
             end: Alignment.bottomRight,
             colors: [
               AppColor.secondary,
-              AppColor.secondary.withOpacity(0.8),
+              AppColor.secondary.withValues(alpha: 0.8),
               Colors.black,
             ],
           ),
@@ -56,7 +54,7 @@ class LoginView extends GetView<LoginController> {
                         letterSpacing: 1.2,
                         shadows: [
                           Shadow(
-                            color: Colors.black.withOpacity(0.5),
+                            color: Colors.black.withValues(alpha: 0.5),
                             offset: const Offset(2, 2),
                             blurRadius: 4,
                           ),
@@ -68,7 +66,7 @@ class LoginView extends GetView<LoginController> {
                       'PSDKU Polinema di Kota Kediri',
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColor.primary.withOpacity(0.8),
+                        color: AppColor.primary.withValues(alpha: 0.8),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -77,10 +75,10 @@ class LoginView extends GetView<LoginController> {
                     // Email Field
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: AppColor.primary.withOpacity(0.3),
+                          color: AppColor.primary.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -115,52 +113,54 @@ class LoginView extends GetView<LoginController> {
                     const SizedBox(height: 20),
 
                     // Password Field
-                    Obx(() => Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: AppColor.primary.withOpacity(0.3),
-                          width: 1,
-                        ),
-                      ),
-                      child: TextFormField(
-                        controller: passwordController,
-                        obscureText: controller.isPasswordHidden.value,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          labelStyle: TextStyle(color: AppColor.primary),
-                          prefixIcon: Icon(
-                            Icons.lock_outline,
-                            color: AppColor.primary,
+                    Obx(
+                      () => Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: AppColor.primary.withValues(alpha: 0.3),
+                            width: 1,
                           ),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              controller.isPasswordHidden.value
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
+                        ),
+                        child: TextFormField(
+                          controller: passwordController,
+                          obscureText: controller.isPasswordHidden.value,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            labelStyle: TextStyle(color: AppColor.primary),
+                            prefixIcon: Icon(
+                              Icons.lock_outline,
                               color: AppColor.primary,
                             ),
-                            onPressed: controller.togglePasswordVisibility,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                controller.isPasswordHidden.value
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                                color: AppColor.primary,
+                              ),
+                              onPressed: controller.togglePasswordVisibility,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 16,
+                            ),
                           ),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 16,
-                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Password tidak boleh kosong';
+                            }
+                            if (value.length < 6) {
+                              return 'Password minimal 6 karakter';
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Password tidak boleh kosong';
-                          }
-                          if (value.length < 6) {
-                            return 'Password minimal 6 karakter';
-                          }
-                          return null;
-                        },
                       ),
-                    )),
+                    ),
                     const SizedBox(height: 16),
 
                     // Forgot Password
@@ -182,57 +182,61 @@ class LoginView extends GetView<LoginController> {
                     const SizedBox(height: 24),
 
                     // Login Button
-                    Obx(() => SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
-                        onPressed: controller.isLoading.value
-                            ? null
-                            : () {
-                          if (formKey.currentState!.validate()) {
-                            controller.login(
-                              emailController.text,
-                              passwordController.text,
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColor.primary,
-                          foregroundColor: AppColor.secondary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          elevation: 8,
-                          shadowColor: AppColor.primary.withOpacity(0.5),
-                        ),
-                        child: controller.isLoading.value
-                            ? SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 3,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColor.secondary,
+                    Obx(
+                      () => SizedBox(
+                        width: double.infinity,
+                        height: 56,
+                        child: ElevatedButton(
+                          onPressed: controller.isLoading.value
+                              ? null
+                              : () {
+                                  if (formKey.currentState!.validate()) {
+                                    controller.login(
+                                      emailController.text,
+                                      passwordController.text,
+                                    );
+                                  }
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColor.primary,
+                            foregroundColor: AppColor.secondary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 8,
+                            shadowColor: AppColor.primary.withValues(
+                              alpha: 0.5,
                             ),
                           ),
-                        )
-                            : const Text(
-                          'Masuk',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1,
-                          ),
+                          child: controller.isLoading.value
+                              ? SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 3,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      AppColor.secondary,
+                                    ),
+                                  ),
+                                )
+                              : const Text(
+                                  'Masuk',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
                         ),
                       ),
-                    )),
+                    ),
                     const SizedBox(height: 24),
 
                     // Footer
                     Text(
                       '© 2024 Mapala Senja',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                         fontSize: 12,
                       ),
                     ),

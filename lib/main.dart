@@ -8,7 +8,6 @@ import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   initializeDateFormatting();
 
   runApp(const MyApp());
@@ -26,10 +25,13 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           initialBinding: InitialBinding(),
           builder: (context, child) {
-            final MediaQueryData data = MediaQuery.of(context);
-            return MediaQuery(
-              data: data.copyWith(textScaler: const TextScaler.linear(1.10)),
-              child: child!,
+            return Overlay(
+              initialEntries: [
+                OverlayEntry(
+                  builder: (context) =>
+                      child!, // Ensure the main app content is a child of the Overlay
+                ),
+              ],
             );
           },
           theme: ThemeData(

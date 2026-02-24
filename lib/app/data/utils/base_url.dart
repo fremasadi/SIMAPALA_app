@@ -1,6 +1,6 @@
 class AppUrl {
-  static const String baseUrl = 'http://192.168.3.131:8080/api';
-  static const String imageUrl = 'http://192.168.3.131:8080/storage';
+  static const String baseUrl = 'https://mapala.underdog.my.id/api';
+  static const String imageUrl = 'https://mapala.underdog.my.id/storage';
 
   // 🧩 Auth Endpoints
   static const String login = '$baseUrl/login';
@@ -11,5 +11,16 @@ class AppUrl {
   static const String alat = '$baseUrl/alats';
 
   // sewa
-  static const String sewa = '$baseUrl/transaksi/pinjam';
+  static const String pinjam = '$baseUrl/transaksi/pinjam';
+
+  //kas
+  static const String kas = '$baseUrl/kas-bulanan';
+  static const String kasOption = '$baseUrl/kas-bulanan/options';
+  static const String totalKas = '$baseUrl/kas-bulanan/total/summary';
+
+  //pembayaran kas
+  static const String kasPembayaran = '$baseUrl/kas-pembayaran';
+
+  //dashboard
+  static const String dashboard = '$baseUrl/dashboard';
 }

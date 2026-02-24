@@ -1,21 +1,20 @@
 import 'dart:convert';
-
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../model/alat_model.dart';
-import '../providers/alat_provider.dart';
+import '../model/dashboard_model.dart';
+import '../providers/dashboard_provider.dart';
 
-class AlatService extends GetxService {
-  final AlatProvider _provider = Get.find();
+class DashboardService extends GetxService {
+  final DashboardProvider _provider = Get.find();
 
-  final RxList<Alat> alatList = <Alat>[].obs;
+  final Rxn<DashboardModel> dashboard = Rxn<DashboardModel>();
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
 
   static const _tokenKey = 'token';
 
-  Future<void> fetchAlat() async {
+  Future<void> fetchDashboard() async {
     try {
       isLoading.value = true;
       errorMessage.value = '';
@@ -24,20 +23,17 @@ class AlatService extends GetxService {
       final token = prefs.getString(_tokenKey);
 
       if (token == null || token.isEmpty) {
-        throw 'Token tidak ditemukan, silakan login ulang';
+        throw 'Token tidak ditemukan';
       }
 
-      final response = await _provider.getAlat(token: token);
+      final response = await _provider.getDashboard(token: token);
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
-        final List data = body['data'];
-
-        alatList.assignAll(data.map((e) => Alat.fromJson(e)).toList());
+        dashboard.value = DashboardModel.fromJson(body);
       } else {
         final body = jsonDecode(response.body);
-
-        throw body['message'] ?? 'Gagal mengambil data alat';
+        throw body['message'] ?? 'Gagal mengambil data dashboard';
       }
     } catch (e) {
       errorMessage.value = e.toString();

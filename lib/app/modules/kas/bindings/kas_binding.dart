@@ -5,8 +5,7 @@ import '../controllers/kas_controller.dart';
 class KasBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<KasController>(
-      () => KasController(),
-    );
+    Get.put(KasController());
+    Get.lazyPut<KasController>(() => KasController());
   }
 }

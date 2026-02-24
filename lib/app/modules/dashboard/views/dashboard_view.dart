@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
 
@@ -16,12 +17,15 @@ class DashboardView extends GetView<DashboardController> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColor.secondary, AppColor.secondary.withOpacity(0.8)],
+          colors: [
+            AppColor.secondary,
+            AppColor.secondary.withValues(alpha: 0.8),
+          ],
         ),
       ),
       child: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.0.sp),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -33,10 +37,11 @@ class DashboardView extends GetView<DashboardController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Selamat Datang,',
+                        'Selamat ${controller.getGreting()},',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
-                          fontSize: 14,
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -50,48 +55,36 @@ class DashboardView extends GetView<DashboardController> {
                       ),
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppColor.primary.withOpacity(0.3),
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.notifications_outlined,
-                      color: AppColor.primary,
-                      size: 28,
-                    ),
-                  ),
                 ],
               ),
               const SizedBox(height: 30),
 
               // Quick Stats
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatCard(
-                      icon: Icons.shopping_bag,
-                      title: 'Dipinjam',
-                      value: '3',
-                      color: Colors.orange,
+              Obx(
+                () => Row(
+                  children: [
+                    Expanded(
+                      child: _buildStatCard(
+                        icon: Icons.shopping_bag,
+                        title: 'Dipinjam',
+                        value: '${controller.totalDipinjam}',
+                        color: Colors.orange,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildStatCard(
-                      icon: Icons.account_balance_wallet,
-                      title: 'Saldo Kas',
-                      value: 'Rp 50K',
-                      color: Colors.green,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildStatCard(
+                        icon: Icons.account_balance_wallet,
+                        title: 'Saldo Kas',
+                        value: controller.saldoKasFormatted,
+                        color: Colors.green,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const SizedBox(height: 30),
+
+              SizedBox(height: 30.h),
 
               // Recent Activity
               Row(
@@ -105,27 +98,57 @@ class DashboardView extends GetView<DashboardController> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Lihat Semua',
-                      style: TextStyle(color: AppColor.primary, fontSize: 12),
-                    ),
-                  ),
                 ],
               ),
-              _buildActivityItem(
-                icon: Icons.shopping_bag,
-                title: 'Peminjaman Tenda',
-                subtitle: '2 hari yang lalu',
-                status: 'Dipinjam',
-                statusColor: Colors.orange,
+              SizedBox(height: 8.h),
+              Expanded(
+                child: Obx(() {
+                  final aktivitas = controller.aktivitas;
+
+                  if (aktivitas.isEmpty) {
+                    return const Center(child: Text('Belum ada aktivitas'));
+                  }
+
+                  return RefreshIndicator(
+                    onRefresh: () => controller.fetchDashboard(),
+                    child: ListView.separated(
+                      itemCount: aktivitas.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final item = aktivitas[index];
+
+                        return _buildActivityItem(
+                          icon: Icons.shopping_bag,
+                          title: item.judul,
+                          subtitle: item.waktu,
+                          status: item.status,
+                          statusColor: _getStatusColor(item.status),
+                        );
+                      },
+                    ),
+                  );
+                }),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'menunggu':
+        return Colors.orange;
+      case 'dipinjam':
+        return Colors.blue;
+      case 'selesai':
+        return Colors.green;
+      case 'ditolak':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
   }
 
   Widget _buildStatCard({
@@ -137,9 +160,9 @@ class DashboardView extends GetView<DashboardController> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,7 +172,7 @@ class DashboardView extends GetView<DashboardController> {
           Text(
             title,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               fontSize: 12,
             ),
           ),
@@ -177,16 +200,16 @@ class DashboardView extends GetView<DashboardController> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.2),
+              color: statusColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: statusColor, size: 24),
@@ -208,7 +231,7 @@ class DashboardView extends GetView<DashboardController> {
                 Text(
                   subtitle,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
+                    color: Colors.white.withValues(alpha: 0.5),
                     fontSize: 12,
                   ),
                 ),
@@ -218,9 +241,9 @@ class DashboardView extends GetView<DashboardController> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.2),
+              color: statusColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: statusColor.withOpacity(0.5)),
+              border: Border.all(color: statusColor.withValues(alpha: 0.5)),
             ),
             child: Text(
               status,

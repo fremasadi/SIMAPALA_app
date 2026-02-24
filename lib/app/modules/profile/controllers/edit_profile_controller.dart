@@ -1,13 +1,11 @@
 import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../data/model/user_model.dart';
-import '../../../data/services/auth_service.dart';
 
-class ProfileController extends GetxController {
-  final AuthService _authService = Get.find();
-
+class EditProfileController extends GetxController {
   final Rxn<UserModel> user = Rxn<UserModel>();
 
   @override
@@ -23,12 +21,5 @@ class ProfileController extends GetxController {
     if (userString != null) {
       user.value = UserModel.fromJson(jsonDecode(userString));
     }
-  }
-
-  /// 🚪 LOGOUT
-  Future<void> logout() async {
-    await _authService.logout();
-
-    Get.offAllNamed('/login');
   }
 }

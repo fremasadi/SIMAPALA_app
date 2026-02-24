@@ -1,23 +1,48 @@
 import 'package:get/get.dart';
+import 'package:simapala/app/data/services/dashboard_service.dart';
 
 class DashboardController extends GetxController {
-  //TODO: Implement DashboardController
+  final DashboardService _dashboardService = Get.find();
+  var isLoading = false.obs;
 
-  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
+    fetchDashboard();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  // =========================
+  // FETCH DATA
+  // =========================
+  Future<void> fetchDashboard() async {
+    try {
+      isLoading.value = true;
+      await _dashboardService.fetchDashboard();
+    } finally {
+      isLoading.value = false;
+    }
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
+  // =========================
+  // GETTER (UNTUK UI)
+  // =========================
 
-  void increment() => count.value++;
+  int get totalDipinjam =>
+      _dashboardService.dashboard.value?.stats.dipinjam ?? 0;
+
+  String get saldoKasFormatted =>
+      _dashboardService.dashboard.value?.stats.saldoKasFormatted ?? 'Rp 0';
+
+  List get aktivitas => _dashboardService.dashboard.value?.aktivitas ?? [];
+
+  // =========================
+  // GREETING
+  // =========================
+  String getGreting() {
+    final hour = DateTime.now().hour;
+    if (hour < 11) return "Pagi";
+    if (hour < 15) return "Siang";
+    if (hour < 18) return "Sore";
+    return "Malam";
+  }
 }

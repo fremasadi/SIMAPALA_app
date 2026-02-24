@@ -2,7 +2,6 @@ import 'dart:convert';
 import '../utils/base_url.dart';
 import 'package:http/http.dart' as http;
 
-
 class AuthProvider {
   Future<http.Response> login({
     required String email,
@@ -14,20 +13,14 @@ class AuthProvider {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({
-        'email': email,
-        'password': password,
-      }),
+      body: jsonEncode({'email': email, 'password': password}),
     );
   }
 
-  Future<http.Response> logout(String token) {
+  Future<http.Response> logout({required String token}) {
     return http.post(
       Uri.parse(AppUrl.logout),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
     );
   }
 }

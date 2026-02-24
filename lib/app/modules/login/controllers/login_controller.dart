@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:get/get.dart';
 
 import '../../../data/services/auth_service.dart';
@@ -10,7 +8,6 @@ class LoginController extends GetxController {
   var isLoading = false.obs;
 
   final AuthService _authService = Get.find();
-
 
   // Toggle password visibility
   void togglePasswordVisibility() {
@@ -29,6 +26,4 @@ class LoginController extends GetxController {
       isLoading(false);
     }
   }
-
-
 }

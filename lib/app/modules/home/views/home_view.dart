@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../style/app_color.dart';
 import '../controllers/home_controller.dart';
@@ -21,7 +20,7 @@ class HomeView extends GetView<HomeController> {
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 10,
                 offset: const Offset(0, -5),
               ),
@@ -33,7 +32,7 @@ class HomeView extends GetView<HomeController> {
             type: BottomNavigationBarType.fixed,
             backgroundColor: AppColor.secondary,
             selectedItemColor: AppColor.primary,
-            unselectedItemColor: Colors.white.withOpacity(0.5),
+            unselectedItemColor: Colors.white.withValues(alpha: 0.5),
             selectedFontSize: 12,
             unselectedFontSize: 11,
             elevation: 0,
