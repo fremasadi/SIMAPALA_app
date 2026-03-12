@@ -47,9 +47,9 @@ class KasBulanan {
   /// 🔁 FROM JSON
   factory KasBulanan.fromJson(Map<String, dynamic> json) => KasBulanan(
     id: json['id'],
-    userId: json['user_id'],
-    bulan: json['bulan'],
-    tahun: json['tahun'],
+    userId: int.parse(json['user_id'].toString()),
+    bulan: int.parse(json['bulan'].toString()),
+    tahun: int.parse(json['tahun'].toString()),
     nominal: json['nominal'],
     status: json['status'],
     createdAt: DateTime.parse(json['created_at']),

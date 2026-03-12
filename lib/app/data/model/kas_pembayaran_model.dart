@@ -32,8 +32,8 @@ class Pembayaran {
   /// 🔁 FROM JSON
   factory Pembayaran.fromJson(Map<String, dynamic> json) => Pembayaran(
     id: json['id'],
-    kasBulananId: json['kas_bulanan_id'],
-    userId: json['user_id'],
+    kasBulananId: int.parse(json['kas_bulanan_id'].toString()),
+    userId: int.parse(json['user_id'].toString()),
     nominal: json['nominal'],
     metode: json['metode'],
     buktiBayar: json['bukti_bayar'],

@@ -99,7 +99,7 @@ class KasView extends GetView<KasController> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 8.h),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Riwayat Transaksi',
@@ -108,6 +108,26 @@ class KasView extends GetView<KasController> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
+                  ),
+                  Obx(
+                    () => controller.isLoading.value
+                        ? SizedBox(
+                            width: 20.w,
+                            height: 20.h,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColor.primary,
+                            ),
+                          )
+                        : IconButton(
+                            onPressed: () => controller.fetchKas(),
+                            icon: Icon(
+                              Icons.refresh,
+                              color: AppColor.primary,
+                              size: 24.sp,
+                            ),
+                            tooltip: 'Refresh',
+                          ),
                   ),
                 ],
               ),

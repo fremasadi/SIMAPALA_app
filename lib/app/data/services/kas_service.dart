@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -86,6 +87,40 @@ class KasService extends GetxService {
     }
   }
 
+  /// ================= SUBMIT KAS PEMBAYARAN =================
+  Future<void> submitKasPembayaran({
+    required String kasBulananId,
+    required String nominal,
+    required String metode,
+    File? buktiFile,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(_tokenKey);
+
+    if (token == null || token.isEmpty) throw 'Token tidak ditemukan';
+
+    final response = await _provider.postKasPembayaran(
+      token: token,
+      kasBulananId: kasBulananId,
+      nominal: nominal,
+      metode: metode,
+      buktiFile: buktiFile,
+    );
+
+    debugPrint('[KAS SERVICE] submitKasPembayaran statusCode: ${response.statusCode}');
+    debugPrint('[KAS SERVICE] submitKasPembayaran body: ${response.body}');
+
+    final body = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if (body['success'] != true) {
+        throw body['message'] ?? 'Gagal mengirim pembayaran';
+      }
+    } else {
+      throw body['message'] ?? 'Gagal mengirim pembayaran';
+    }
+  }
+
   /// ================= TOTAL KAS =================
   Future<void> fetchTotalKas() async {
     try {
@@ -101,7 +136,7 @@ class KasService extends GetxService {
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
 
-        totalKas.value = body['total_kas'];
+        totalKas.value = int.parse(body['total_kas'].toString());
         totalKasFormatted.value = body['formatted'];
       } else {
         throw jsonDecode(response.body)['message'];

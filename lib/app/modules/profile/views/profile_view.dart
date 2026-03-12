@@ -28,8 +28,12 @@ class ProfileView extends GetView<ProfileController> {
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height,
+              ),
+              child: Column(
+                children: [
                 // Profile Header
                 Obx(() {
                   final user = controller.user.value;
@@ -98,36 +102,36 @@ class ProfileView extends GetView<ProfileController> {
 
                 const SizedBox(height: 30),
 
-                // Menu Items
-                _buildMenuItem(
-                  icon: Icons.person_outline,
-                  title: 'Edit Profil',
-                  onTap: () {
-                    Get.to(EditProfileView());
-                  },
-                ),
-                const SizedBox(height: 12),
-                _buildMenuItem(
-                  icon: Icons.lock_outline,
-                  title: 'Ubah Password',
-                  onTap: () {
-                    Get.to(EditPasswordView());
-                  },
-                ),
-                const SizedBox(height: 12),
-                _buildMenuItem(
-                  icon: Icons.notification_important,
-                  title: 'Notifikasi',
-                  onTap: () {
-                    Get.to(NotificationView());
-                  },
-                ),
-                const SizedBox(height: 12),
-                _buildMenuItem(
-                  icon: Icons.help_outline,
-                  title: 'Bantuan',
-                  onTap: () {},
-                ),
+                // // Menu Items
+                // _buildMenuItem(
+                //   icon: Icons.person_outline,
+                //   title: 'Edit Profil',
+                //   onTap: () {
+                //     Get.to(EditProfileView());
+                //   },
+                // ),
+                // const SizedBox(height: 12),
+                // _buildMenuItem(
+                //   icon: Icons.lock_outline,
+                //   title: 'Ubah Password',
+                //   onTap: () {
+                //     Get.to(EditPasswordView());
+                //   },
+                // ),
+                // const SizedBox(height: 12),
+                // _buildMenuItem(
+                //   icon: Icons.notification_important,
+                //   title: 'Notifikasi',
+                //   onTap: () {
+                //     Get.to(NotificationView());
+                //   },
+                // ),
+                // const SizedBox(height: 12),
+                // _buildMenuItem(
+                //   icon: Icons.help_outline,
+                //   title: 'Bantuan',
+                //   onTap: () {},
+                // ),
                 const SizedBox(height: 12),
                 _buildMenuItem(
                   icon: Icons.info_outline,
@@ -160,7 +164,8 @@ class ProfileView extends GetView<ProfileController> {
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 
   Widget _buildMenuItem({

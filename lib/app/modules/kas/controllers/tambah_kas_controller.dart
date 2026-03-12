@@ -22,18 +22,20 @@ class TambahKasController extends GetxController {
 
   final _kasService = Get.find<KasService>();
 
-  // Data
-  RxList<KasBulananOption> get kasBulananList => _kasService.kasOptionList;
+  // Data — local copy agar Obx tracking reliable
+  final kasBulananList = <KasBulananOption>[].obs;
 
   @override
-  void onInit() {
-    super.onInit();
+  void onReady() {
+    super.onReady();
     fetchKasBulananList();
   }
 
   Future<void> fetchKasBulananList() async {
     isLoadingOptions.value = true;
     await _kasService.fetchKasOption();
+    kasBulananList.assignAll(_kasService.kasOptionList);
+    debugPrint('[TAMBAH KAS CTRL] kasBulananList.length = ${kasBulananList.length}');
     isLoadingOptions.value = false;
   }
 
@@ -68,50 +70,76 @@ class TambahKasController extends GetxController {
   bool validate() {
     bool isValid = true;
 
+    debugPrint('[SUBMIT] validate => kasBulananId: ${selectedKasBulanan.value}, nominal: ${selectedNominal.value}, metode: ${selectedMetode.value}');
+
     if (selectedKasBulanan.value.isEmpty) {
       kasBulananError.value = 'Pilih kas bulanan';
       isValid = false;
+    } else {
+      kasBulananError.value = '';
     }
 
     if (selectedNominal.value.isEmpty) {
       nominalError.value = 'Nominal harus diisi';
       isValid = false;
     } else {
-      double? nominal = double.tryParse(selectedNominal.value);
+      // nominal format '10.000' → strip titik → '10000' baru parse
+      final nominalClean = selectedNominal.value.replaceAll('.', '');
+      final nominal = double.tryParse(nominalClean);
+      debugPrint('[SUBMIT] nominalClean: $nominalClean, parsed: $nominal');
       if (nominal == null || nominal < 1000) {
         nominalError.value = 'Nominal minimal Rp 1.000';
         isValid = false;
+      } else {
+        nominalError.value = '';
       }
     }
 
     if (selectedMetode.value.isEmpty) {
       metodeError.value = 'Pilih metode pembayaran';
       isValid = false;
+    } else {
+      metodeError.value = '';
     }
 
+    debugPrint('[SUBMIT] validate result: $isValid');
     return isValid;
   }
 
   Future<void> submitKas() async {
-    if (!validate()) return;
+    debugPrint('[SUBMIT] submitKas called');
+
+    if (!validate()) {
+      debugPrint('[SUBMIT] validate FAILED, abort');
+      return;
+    }
 
     isLoading.value = true;
 
     try {
-      // TODO: Submit ke API
-      await Future.delayed(Duration(seconds: 2)); // Simulasi
+      final nominalStr = selectedNominal.value.replaceAll('.', '');
+      debugPrint('[SUBMIT] sending => kasBulananId: ${selectedKasBulanan.value}, nominal: $nominalStr, metode: ${selectedMetode.value}, hasFoto: ${selectedImage.value != null}');
 
+      await _kasService.submitKasPembayaran(
+        kasBulananId: selectedKasBulanan.value,
+        nominal: nominalStr,
+        metode: selectedMetode.value,
+        buktiFile: selectedImage.value,
+      );
+
+      debugPrint('[SUBMIT] SUCCESS');
       Get.back(result: true);
       Get.snackbar(
         'Berhasil',
-        'Kas berhasil ditambahkan',
+        'Pembayaran kas berhasil dikirim, menunggu verifikasi',
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
     } catch (e) {
+      debugPrint('[SUBMIT] ERROR: $e');
       Get.snackbar(
         'Error',
-        'Gagal menambahkan kas: $e',
+        'Gagal mengirim pembayaran: $e',
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );

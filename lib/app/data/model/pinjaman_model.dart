@@ -29,7 +29,7 @@ class Pinjaman {
 
   factory Pinjaman.fromJson(Map<String, dynamic> json) => Pinjaman(
     id: json["id"],
-    userId: json["user_id"],
+    userId: int.parse(json["user_id"].toString()),
     jenisTransaksi: json['jenis_transaksi'],
     tanggalAjuan: DateTime.parse(json["tanggal_ajuan"]),
     tanggalPinjam: DateTime.parse(json["tanggal_pinjam"]),
@@ -81,8 +81,8 @@ class DetailTransaksi {
   factory DetailTransaksi.fromJson(Map<String, dynamic> json) =>
       DetailTransaksi(
         id: json["id"],
-        transaksiId: json["transaksi_id"],
-        alatId: json["alat_id"],
+        transaksiId: int.parse(json["transaksi_id"].toString()),
+        alatId: int.parse(json["alat_id"].toString()),
         kondisiKembali: json["kondisi_kembali"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
