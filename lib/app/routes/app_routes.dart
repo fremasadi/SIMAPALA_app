@@ -10,6 +10,7 @@ abstract class Routes {
   static const PEMINJAMAN = _Paths.PEMINJAMAN;
   static const PROFILE = _Paths.PROFILE;
   static const KAS = _Paths.KAS;
+  static const DANAMASUK = _Paths.DANAMASUK;
 }
 
 abstract class _Paths {
@@ -21,4 +22,5 @@ abstract class _Paths {
   static const PEMINJAMAN = '/peminjaman';
   static const PROFILE = '/profile';
   static const KAS = '/kas';
+  static const DANAMASUK = '/danamasuk';
 }

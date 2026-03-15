@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/danamasuk/bindings/danamasuk_binding.dart';
+import '../modules/danamasuk/views/danamasuk_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -57,6 +59,11 @@ class AppPages {
       name: _Paths.KAS,
       page: () => const KasView(),
       binding: KasBinding(),
+    ),
+    GetPage(
+      name: _Paths.DANAMASUK,
+      page: () => const DanamasukView(),
+      binding: DanamasukBinding(),
     ),
   ];
 }

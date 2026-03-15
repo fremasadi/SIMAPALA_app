@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:simapala/app/modules/danamasuk/views/danamasuk_view.dart';
 import 'package:simapala/app/modules/kas/views/kas_view.dart';
 import 'package:simapala/app/modules/profile/views/profile_view.dart';
 import '../../dashboard/views/dashboard_view.dart';
@@ -12,6 +13,7 @@ class HomeController extends GetxController {
     const DashboardView(),
     PeminjamanView(),
     const KasView(),
+    const DanamasukView(),
     const ProfileView(),
   ];
 

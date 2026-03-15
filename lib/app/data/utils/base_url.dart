@@ -1,6 +1,6 @@
 class AppUrl {
-  static const String baseUrl = 'https://mapala.underdog.my.id/api';
-  static const String imageUrl = 'https://mapala.underdog.my.id/storage';
+  static const String baseUrl = 'http://192.168.1.2:8080/api';
+  static const String imageUrl = 'http://192.168.1.2:8080/storage';
 
   // 🧩 Auth Endpoints
   static const String login = '$baseUrl/login';

@@ -53,6 +53,11 @@ class HomeView extends GetView<HomeController> {
                 label: 'Kas',
               ),
               BottomNavigationBarItem(
+                icon: Icon(Icons.attach_money),
+                activeIcon: Icon(Icons.attach_money),
+                label: 'Dana Mapala',
+              ),
+              BottomNavigationBarItem(
                 icon: Icon(Icons.person_outline),
                 activeIcon: Icon(Icons.person),
                 label: 'Profil',
