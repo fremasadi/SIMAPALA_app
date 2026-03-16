@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
 import 'package:simapala/app/data/providers/alat_provider.dart';
+import 'package:simapala/app/data/providers/dana_masuk_provider.dart';
 import 'package:simapala/app/data/providers/dashboard_provider.dart';
 import 'package:simapala/app/data/providers/kas_provider.dart';
 import 'package:simapala/app/data/providers/pinjam_provider.dart';
 import 'package:simapala/app/data/services/alat_service.dart';
+import 'package:simapala/app/data/services/dana_masuk_service.dart';
 import 'package:simapala/app/data/services/dashboard_service.dart';
 import 'package:simapala/app/data/services/kas_service.dart';
 import 'package:simapala/app/data/services/pinjam_service.dart';
@@ -23,5 +25,7 @@ class InitialBinding extends Bindings {
     Get.put<KasService>(KasService(), permanent: true);
     Get.put<DashboardProvider>(DashboardProvider(), permanent: true);
     Get.put<DashboardService>(DashboardService(), permanent: true);
+    Get.put<DanaMasukProvider>(DanaMasukProvider(), permanent: true);
+    Get.put<DanaMasukService>(DanaMasukService(), permanent: true);
   }
 }

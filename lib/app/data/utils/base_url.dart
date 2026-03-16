@@ -21,6 +21,10 @@ class AppUrl {
   //pembayaran kas
   static const String kasPembayaran = '$baseUrl/kas-pembayaran';
 
+  //dana masuk
+  static const String danaMasuk = '$baseUrl/dana-masuk';
+  static const String danaMasukSummary = '$baseUrl/dana-masuk/summary';
+
   //dashboard
   static const String dashboard = '$baseUrl/dashboard';
 }
