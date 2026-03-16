@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simapala/app/data/model/kas_bulanan_model.dart';
 
 import 'package:simapala/app/data/providers/kas_provider.dart';
+import '../utils/api_guard.dart';
 
 class KasService extends GetxService {
   final KasProvider _provider = Get.find();
@@ -20,21 +20,15 @@ class KasService extends GetxService {
   final RxInt totalKas = 0.obs;
   final RxString totalKasFormatted = 'Rp 0'.obs;
 
-  static const _tokenKey = 'token';
-
   Future<void> fetchKasBulanan() async {
     try {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString(_tokenKey);
-
-      if (token == null || token.isEmpty) {
-        throw 'Token tidak ditemukan, silakan login ulang';
-      }
+      final token = await ApiGuard.getToken();
 
       final response = await _provider.getKasBulanan(token: token);
+      ApiGuard.checkResponse(response);
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
@@ -58,15 +52,11 @@ class KasService extends GetxService {
   /// ================= KAS OPTION =================
   Future<void> fetchKasOption() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString(_tokenKey);
-      debugPrint('[KAS SERVICE] token from prefs: ${token == null ? "NULL" : "ada (${token.length} chars)"}');
-
-      if (token == null || token.isEmpty) {
-        throw 'Token tidak ditemukan';
-      }
+      final token = await ApiGuard.getToken();
+      debugPrint('[KAS SERVICE] token from prefs: ada (${token.length} chars)');
 
       final response = await _provider.getKasOption(token: token);
+      ApiGuard.checkResponse(response);
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
@@ -94,10 +84,7 @@ class KasService extends GetxService {
     required String metode,
     File? buktiFile,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(_tokenKey);
-
-    if (token == null || token.isEmpty) throw 'Token tidak ditemukan';
+    final token = await ApiGuard.getToken();
 
     final response = await _provider.postKasPembayaran(
       token: token,
@@ -106,6 +93,7 @@ class KasService extends GetxService {
       metode: metode,
       buktiFile: buktiFile,
     );
+    ApiGuard.checkResponse(response);
 
     debugPrint('[KAS SERVICE] submitKasPembayaran statusCode: ${response.statusCode}');
     debugPrint('[KAS SERVICE] submitKasPembayaran body: ${response.body}');
@@ -124,14 +112,10 @@ class KasService extends GetxService {
   /// ================= TOTAL KAS =================
   Future<void> fetchTotalKas() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString(_tokenKey);
-
-      if (token == null || token.isEmpty) {
-        throw 'Token tidak ditemukan';
-      }
+      final token = await ApiGuard.getToken();
 
       final response = await _provider.getTotalKas(token: token);
+      ApiGuard.checkResponse(response);
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);

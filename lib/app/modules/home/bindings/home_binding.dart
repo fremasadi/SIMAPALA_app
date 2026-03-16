@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:simapala/app/modules/danamasuk/controllers/danamasuk_controller.dart';
 import 'package:simapala/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:simapala/app/modules/kas/controllers/kas_controller.dart';
 import 'package:simapala/app/modules/kas/controllers/tambah_kas_controller.dart';
@@ -23,5 +24,7 @@ class HomeBinding extends Bindings {
     Get.put(KasController());
     Get.put(DashboardController());
     Get.put(TambahKasController());
+    Get.put(DanamasukController());
+
   }
 }

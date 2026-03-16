@@ -1,15 +1,14 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simapala/app/data/model/pinjaman_model.dart';
 
 import '../providers/pinjam_provider.dart';
+import '../utils/api_guard.dart';
 
 class PeminjamanService extends GetxService {
   final PeminjamanProvider _provider = Get.find();
 
-  static const _tokenKey = 'token';
   final RxList<Pinjaman> pinjamanList = <Pinjaman>[].obs;
 
   final RxBool isLoading = false.obs;
@@ -21,14 +20,10 @@ class PeminjamanService extends GetxService {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString(_tokenKey);
-
-      if (token == null || token.isEmpty) {
-        throw 'Token tidak ditemukan, silakan login ulang';
-      }
+      final token = await ApiGuard.getToken();
 
       final response = await _provider.getPinjmana(token: token);
+      ApiGuard.checkResponse(response);
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
@@ -56,12 +51,7 @@ class PeminjamanService extends GetxService {
       errorMessage.value = '';
       isSuccess.value = false;
 
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString(_tokenKey);
-
-      if (token == null || token.isEmpty) {
-        throw 'Token tidak ditemukan, silakan login ulang';
-      }
+      final token = await ApiGuard.getToken();
 
       final response = await _provider.postPinjam(
         token: token,
@@ -69,6 +59,7 @@ class PeminjamanService extends GetxService {
         tanggalKembali: tanggalKembali,
         alatIds: alatIds,
       );
+      ApiGuard.checkResponse(response);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         isSuccess.value = true;

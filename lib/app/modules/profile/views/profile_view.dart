@@ -13,27 +13,26 @@ class ProfileView extends GetView<ProfileController> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColor.secondary,
-              AppColor.secondary.withValues(alpha: 0.8),
-            ],
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColor.secondary,
+            AppColor.secondary.withValues(alpha: 0.8),
+          ],
         ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height,
-              ),
-              child: Column(
-                children: [
+      ),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height,
+            ),
+            child: Column(
+              children: [
                 // Profile Header
                 Obx(() {
                   final user = controller.user.value;
@@ -49,13 +48,62 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     child: Column(
                       children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: AppColor.primary,
-                          child: Icon(
-                            Icons.person,
-                            size: 50,
-                            color: AppColor.secondary,
+                        GestureDetector(
+                          onTap: controller.isUploading.value
+                              ? null
+                              : () => controller.pickAndUploadImage(),
+                          child: Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundColor: AppColor.primary,
+                                backgroundImage:
+                                    controller.imageUrl.value != null
+                                    ? NetworkImage(controller.imageUrl.value!)
+                                    : null,
+                                child: controller.isImageLoading.value
+                                    ? const CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      )
+                                    : controller.imageUrl.value == null
+                                    ? Icon(
+                                        Icons.person,
+                                        size: 50,
+                                        color: AppColor.secondary,
+                                      )
+                                    : null,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: AppColor.primary,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: AppColor.secondary,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: controller.isUploading.value
+                                      ? const SizedBox(
+                                          width: 14,
+                                          height: 14,
+                                          child: CircularProgressIndicator(
+                                            color: Colors.white,
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : const Icon(
+                                          Icons.camera_alt,
+                                          size: 14,
+                                          color: Colors.white,
+                                        ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -111,14 +159,14 @@ class ProfileView extends GetView<ProfileController> {
                 //   },
                 // ),
                 // const SizedBox(height: 12),
-                // _buildMenuItem(
-                //   icon: Icons.lock_outline,
-                //   title: 'Ubah Password',
-                //   onTap: () {
-                //     Get.to(EditPasswordView());
-                //   },
-                // ),
-                // const SizedBox(height: 12),
+                _buildMenuItem(
+                  icon: Icons.lock_outline,
+                  title: 'Ubah Password',
+                  onTap: () {
+                    Get.to(EditPasswordView());
+                  },
+                ),
+                const SizedBox(height: 12),
                 // _buildMenuItem(
                 //   icon: Icons.notification_important,
                 //   title: 'Notifikasi',
@@ -164,8 +212,7 @@ class ProfileView extends GetView<ProfileController> {
           ),
         ),
       ),
-    ),
-  );
+    );
   }
 
   Widget _buildMenuItem({

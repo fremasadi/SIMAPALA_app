@@ -116,20 +116,34 @@ class EditPasswordView extends GetView<EditPasswordController> {
                     ),
                     SizedBox(width: 12.w),
                     Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Handle simpan
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColor.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
+                      child: Obx(
+                        () => ElevatedButton(
+                          onPressed: controller.isLoading.value
+                              ? null
+                              : () => controller.changePassword(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColor.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 14.h),
+                            disabledBackgroundColor:
+                                AppColor.primary.withValues(alpha: 0.5),
                           ),
-                          padding: EdgeInsets.symmetric(vertical: 14.h),
-                        ),
-                        child: Text(
-                          'Simpan',
-                          style: AppFont.semiBold(16.sp, color: Colors.white),
+                          child: controller.isLoading.value
+                              ? SizedBox(
+                                  width: 20.w,
+                                  height: 20.h,
+                                  child: const CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  'Simpan',
+                                  style: AppFont.semiBold(16.sp,
+                                      color: Colors.white),
+                                ),
                         ),
                       ),
                     ),

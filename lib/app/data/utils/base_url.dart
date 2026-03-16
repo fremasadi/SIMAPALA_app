@@ -27,4 +27,8 @@ class AppUrl {
 
   //dashboard
   static const String dashboard = '$baseUrl/dashboard';
+
+  // profile
+  static const String profileImage = '$baseUrl/profile/image';
+  static const String changePassword = '$baseUrl/profile/change-password';
 }

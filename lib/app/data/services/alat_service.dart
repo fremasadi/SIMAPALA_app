@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/alat_model.dart';
 import '../providers/alat_provider.dart';
+import '../utils/api_guard.dart';
 
 class AlatService extends GetxService {
   final AlatProvider _provider = Get.find();
@@ -13,31 +13,21 @@ class AlatService extends GetxService {
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
 
-  static const _tokenKey = 'token';
-
   Future<void> fetchAlat() async {
     try {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString(_tokenKey);
-
-      if (token == null || token.isEmpty) {
-        throw 'Token tidak ditemukan, silakan login ulang';
-      }
-
+      final token = await ApiGuard.getToken();
       final response = await _provider.getAlat(token: token);
+      ApiGuard.checkResponse(response);
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
         final List data = body['data'];
-
         alatList.assignAll(data.map((e) => Alat.fromJson(e)).toList());
       } else {
-        final body = jsonDecode(response.body);
-
-        throw body['message'] ?? 'Gagal mengambil data alat';
+        throw jsonDecode(response.body)['message'] ?? 'Gagal mengambil data alat';
       }
     } catch (e) {
       errorMessage.value = e.toString();

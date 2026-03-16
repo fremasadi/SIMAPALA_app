@@ -109,26 +109,26 @@ class KasView extends GetView<KasController> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Obx(
-                    () => controller.isLoading.value
-                        ? SizedBox(
-                            width: 20.w,
-                            height: 20.h,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppColor.primary,
-                            ),
-                          )
-                        : IconButton(
-                            onPressed: () => controller.fetchKas(),
-                            icon: Icon(
-                              Icons.refresh,
-                              color: AppColor.primary,
-                              size: 24.sp,
-                            ),
-                            tooltip: 'Refresh',
-                          ),
-                  ),
+                  // Obx(
+                  //   () => controller.isLoading.value
+                  //       ? SizedBox(
+                  //           width: 20.w,
+                  //           height: 20.h,
+                  //           child: CircularProgressIndicator(
+                  //             strokeWidth: 2,
+                  //             color: AppColor.primary,
+                  //           ),
+                  //         )
+                  //       : IconButton(
+                  //           onPressed: () => controller.fetchKas(),
+                  //           icon: Icon(
+                  //             Icons.refresh,
+                  //             color: AppColor.primary,
+                  //             size: 24.sp,
+                  //           ),
+                  //           tooltip: 'Refresh',
+                  //         ),
+                  // ),
                 ],
               ),
             ),
@@ -143,33 +143,38 @@ class KasView extends GetView<KasController> {
                   return const Center(child: Text('Belum ada data kas'));
                 }
 
-                return ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: controller.kasBulananList.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final kas = controller.kasBulananList[index];
+                return RefreshIndicator(
+                  onRefresh: () async => controller.fetchKas(),
+                  color: AppColor.primary,
+                  backgroundColor: AppColor.secondary,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemCount: controller.kasBulananList.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final kas = controller.kasBulananList[index];
 
-                    // ambil pembayaran pertama (biasanya cuma 1)
-                    final pembayaran = kas.pembayarans.isNotEmpty
-                        ? kas.pembayarans.first
-                        : null;
+                      // ambil pembayaran pertama (biasanya cuma 1)
+                      final pembayaran = kas.pembayarans.isNotEmpty
+                          ? kas.pembayarans.first
+                          : null;
 
-                    return _buildKasCard(
-                      jenis: 'Pemasukan',
-                      keterangan: ' ${_formatBulan(kas.bulan)} ${kas.tahun}',
-                      tanggal: pembayaran != null
-                          ? _formatDate(pembayaran.tanggalBayar)
-                          : '-',
-                      status: kas.status == 'lunas' ? 'Lunas' : 'Belum Lunas',
-                      detailClick: () {
-                        showPembayaranListBottomSheet(
-                          context,
-                          kas.pembayarans, // ✅ LIST
-                        );
-                      },
-                    );
-                  },
+                      return _buildKasCard(
+                        jenis: 'Pemasukan',
+                        keterangan: ' ${_formatBulan(kas.bulan)} ${kas.tahun}',
+                        tanggal: pembayaran != null
+                            ? _formatDate(pembayaran.tanggalBayar)
+                            : '-',
+                        status: kas.status == 'lunas' ? 'Lunas' : 'Belum Lunas',
+                        detailClick: () {
+                          showPembayaranListBottomSheet(
+                            context,
+                            kas.pembayarans,
+                          );
+                        },
+                      );
+                    },
+                  ),
                 );
               }),
             ),

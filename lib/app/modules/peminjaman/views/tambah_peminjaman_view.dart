@@ -71,7 +71,11 @@ class TambahPeminjamanView extends GetView<TambahPeminjamanController> {
 
               // CONTENT
               Expanded(
-                child: SingleChildScrollView(
+                child: RefreshIndicator(
+                  onRefresh: () async => controller.fetchAlat(),
+                  color: AppColor.primary,
+                  child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -494,11 +498,11 @@ class TambahPeminjamanView extends GetView<TambahPeminjamanController> {
                                     color: Colors.white24,
                                     height: 24,
                                   ),
-                                  _buildSummaryRow(
-                                    'Total Biaya',
-                                    controller.getTotalBiaya(),
-                                    isTotal: true,
-                                  ),
+                                  // _buildSummaryRow(
+                                  //   'Total Biaya',
+                                  //   controller.getTotalBiaya(),
+                                  //   isTotal: true,
+                                  // ),
                                 ],
                               ),
                             ),
@@ -568,6 +572,7 @@ class TambahPeminjamanView extends GetView<TambahPeminjamanController> {
                       }),
                     ],
                   ),
+                ),
                 ),
               ),
             ],
@@ -670,10 +675,15 @@ class TambahPeminjamanView extends GetView<TambahPeminjamanController> {
     Function(DateTime) onDateSelected, {
     DateTime? firstDate,
   }) async {
+    final DateTime effectiveFirstDate = firstDate ?? DateTime.now();
+    final DateTime effectiveInitialDate =
+        (initialDate != null && !initialDate.isBefore(effectiveFirstDate))
+            ? initialDate
+            : effectiveFirstDate;
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: initialDate ?? DateTime.now(),
-      firstDate: firstDate ?? DateTime.now(),
+      initialDate: effectiveInitialDate,
+      firstDate: effectiveFirstDate,
       lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (context, child) {
         return Theme(

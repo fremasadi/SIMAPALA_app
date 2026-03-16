@@ -2,14 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../model/dana_masuk_model.dart';
 import '../providers/dana_masuk_provider.dart';
+import '../utils/api_guard.dart';
 
 class DanaMasukService extends GetxService {
   final DanaMasukProvider _provider = Get.find();
-
-  static const _tokenKey = 'token';
 
   final RxList<DanaMasuk> danaMasukList = <DanaMasuk>[].obs;
   final RxList<DanaMasukSummaryItem> summaryList =
@@ -18,11 +16,6 @@ class DanaMasukService extends GetxService {
   final RxDouble totalFiltered = 0.0.obs;
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
-
-  Future<String?> _token() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_tokenKey);
-  }
 
   Future<void> fetchDanaMasuk({
     String? status,
@@ -34,8 +27,7 @@ class DanaMasukService extends GetxService {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final token = await _token();
-      if (token == null || token.isEmpty) throw 'Token tidak ditemukan';
+      final token = await ApiGuard.getToken();
 
       final response = await _provider.getDanaMasuk(
         token: token,
@@ -44,6 +36,7 @@ class DanaMasukService extends GetxService {
         tahun: tahun,
         bulan: bulan,
       );
+      ApiGuard.checkResponse(response);
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
@@ -63,14 +56,14 @@ class DanaMasukService extends GetxService {
 
   Future<void> fetchSummary({int? tahun, int? bulan}) async {
     try {
-      final token = await _token();
-      if (token == null || token.isEmpty) throw 'Token tidak ditemukan';
+      final token = await ApiGuard.getToken();
 
       final response = await _provider.getSummary(
         token: token,
         tahun: tahun,
         bulan: bulan,
       );
+      ApiGuard.checkResponse(response);
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
@@ -92,8 +85,7 @@ class DanaMasukService extends GetxService {
     File? buktiFile,
     String? tanggal,
   }) async {
-    final token = await _token();
-    if (token == null || token.isEmpty) throw 'Token tidak ditemukan';
+    final token = await ApiGuard.getToken();
 
     final response = await _provider.postSumbangan(
       token: token,
@@ -102,6 +94,7 @@ class DanaMasukService extends GetxService {
       buktiFile: buktiFile,
       tanggal: tanggal,
     );
+    ApiGuard.checkResponse(response);
 
     final body = jsonDecode(response.body);
 

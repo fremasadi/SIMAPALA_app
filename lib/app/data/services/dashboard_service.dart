@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/dashboard_model.dart';
 import '../providers/dashboard_provider.dart';
+import '../utils/api_guard.dart';
 
 class DashboardService extends GetxService {
   final DashboardProvider _provider = Get.find();
@@ -12,21 +12,15 @@ class DashboardService extends GetxService {
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
 
-  static const _tokenKey = 'token';
-
   Future<void> fetchDashboard() async {
     try {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString(_tokenKey);
-
-      if (token == null || token.isEmpty) {
-        throw 'Token tidak ditemukan';
-      }
+      final token = await ApiGuard.getToken();
 
       final response = await _provider.getDashboard(token: token);
+      ApiGuard.checkResponse(response);
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);

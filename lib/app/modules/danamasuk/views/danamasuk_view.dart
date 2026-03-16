@@ -43,36 +43,34 @@ class DanamasukView extends GetView<DanamasukController> {
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       child: Row(
         children: [
-          IconButton(
-            onPressed: () => Get.back(),
-            icon: Icon(Icons.arrow_back, color: AppColor.primary, size: 26.sp),
-          ),
-          SizedBox(width: 4.w),
           Text(
             'Dana Masuk',
             style: AppFont.semiBold(20.sp, color: AppColor.primary),
           ),
           const Spacer(),
-          Obx(
-            () => controller.isLoading.value
-                ? Padding(
-                    padding: EdgeInsets.only(right: 16.w),
-                    child: SizedBox(
-                      width: 20.w,
-                      height: 20.h,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppColor.primary,
-                      ),
-                    ),
-                  )
-                : IconButton(
-                    onPressed: () => controller.fetchAll(),
-                    icon: Icon(Icons.refresh,
-                        color: AppColor.primary, size: 24.sp),
-                    tooltip: 'Refresh',
-                  ),
-          ),
+          // Obx(
+          //   () => controller.isLoading.value
+          //       ? Padding(
+          //           padding: EdgeInsets.only(right: 16.w),
+          //           child: SizedBox(
+          //             width: 20.w,
+          //             height: 20.h,
+          //             child: CircularProgressIndicator(
+          //               strokeWidth: 2,
+          //               color: AppColor.primary,
+          //             ),
+          //           ),
+          //         )
+          //       : IconButton(
+          //           onPressed: () => controller.fetchAll(),
+          //           icon: Icon(
+          //             Icons.refresh,
+          //             color: AppColor.primary,
+          //             size: 24.sp,
+          //           ),
+          //           tooltip: 'Refresh',
+          //         ),
+          // ),
         ],
       ),
     );
@@ -96,8 +94,10 @@ class DanamasukView extends GetView<DanamasukController> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Total Dana Masuk',
-                    style: AppFont.semiBold(14.sp, color: AppColor.primary)),
+                Text(
+                  'Total Dana Masuk',
+                  style: AppFont.semiBold(14.sp, color: AppColor.primary),
+                ),
                 Text(
                   controller.formatRupiah(controller.grandTotal.value),
                   style: AppFont.semiBold(18.sp, color: AppColor.primary),
@@ -105,7 +105,10 @@ class DanamasukView extends GetView<DanamasukController> {
               ],
             ),
             if (controller.summaryList.isNotEmpty) ...[
-              Divider(color: AppColor.primary.withValues(alpha: 0.3), height: 20.h),
+              Divider(
+                color: AppColor.primary.withValues(alpha: 0.3),
+                height: 20.h,
+              ),
               ...controller.summaryList.map(
                 (item) => Padding(
                   padding: EdgeInsets.only(bottom: 6.h),
@@ -114,17 +117,27 @@ class DanamasukView extends GetView<DanamasukController> {
                     children: [
                       Row(
                         children: [
-                          Icon(_jenisIcon(item.jenis),
-                              size: 16.sp,
-                              color: Colors.white.withValues(alpha: 0.8)),
+                          Icon(
+                            _jenisIcon(item.jenis),
+                            size: 16.sp,
+                            color: Colors.white.withValues(alpha: 0.8),
+                          ),
                           SizedBox(width: 6.w),
-                          Text(item.jenisLabel,
-                              style: AppFont.regular(13.sp,
-                                  color: Colors.white.withValues(alpha: 0.9))),
+                          Text(
+                            item.jenisLabel,
+                            style: AppFont.regular(
+                              13.sp,
+                              color: Colors.white.withValues(alpha: 0.9),
+                            ),
+                          ),
                           SizedBox(width: 4.w),
-                          Text('(${item.count})',
-                              style: AppFont.regular(11.sp,
-                                  color: Colors.white.withValues(alpha: 0.6))),
+                          Text(
+                            '(${item.count})',
+                            style: AppFont.regular(
+                              11.sp,
+                              color: Colors.white.withValues(alpha: 0.6),
+                            ),
+                          ),
                         ],
                       ),
                       Text(
@@ -158,8 +171,8 @@ class DanamasukView extends GetView<DanamasukController> {
                   label: controller.selectedStatus.value == null
                       ? 'Semua Status'
                       : controller.selectedStatus.value == 'approved'
-                          ? 'Approved'
-                          : 'Pending',
+                      ? 'Approved'
+                      : 'Pending',
                   active: controller.selectedStatus.value != null,
                   onTap: () => _showStatusFilter(),
                 ),
@@ -168,8 +181,9 @@ class DanamasukView extends GetView<DanamasukController> {
                 _filterChip(
                   label: controller.selectedJenis.value == null
                       ? 'Semua Jenis'
-                      : DanamasukController
-                          .jenisOptions[controller.selectedJenis.value]!,
+                      : DanamasukController.jenisOptions[controller
+                            .selectedJenis
+                            .value]!,
                   active: controller.selectedJenis.value != null,
                   onTap: () => _showJenisFilter(),
                 ),
@@ -215,7 +229,9 @@ class DanamasukView extends GetView<DanamasukController> {
               : Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: active ? AppColor.primary : Colors.white.withValues(alpha: 0.3),
+            color: active
+                ? AppColor.primary
+                : Colors.white.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
@@ -229,13 +245,18 @@ class DanamasukView extends GetView<DanamasukController> {
               label,
               style: AppFont.regular(
                 12.sp,
-                color: active ? Colors.white : Colors.white.withValues(alpha: 0.85),
+                color: active
+                    ? Colors.white
+                    : Colors.white.withValues(alpha: 0.85),
               ),
             ),
             if (!active && icon == null) ...[
               SizedBox(width: 4.w),
-              Icon(Icons.arrow_drop_down,
-                  size: 16.sp, color: Colors.white.withValues(alpha: 0.7)),
+              Icon(
+                Icons.arrow_drop_down,
+                size: 16.sp,
+                color: Colors.white.withValues(alpha: 0.7),
+              ),
             ],
           ],
         ),
@@ -259,31 +280,42 @@ class DanamasukView extends GetView<DanamasukController> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.inbox_outlined,
-                    size: 64.sp, color: Colors.white.withValues(alpha: 0.4)),
+                Icon(
+                  Icons.inbox_outlined,
+                  size: 64.sp,
+                  color: Colors.white.withValues(alpha: 0.4),
+                ),
                 SizedBox(height: 12.h),
                 Text(
                   'Belum ada data dana masuk',
-                  style: AppFont.regular(14.sp,
-                      color: Colors.white.withValues(alpha: 0.6)),
+                  style: AppFont.regular(
+                    14.sp,
+                    color: Colors.white.withValues(alpha: 0.6),
+                  ),
                 ),
               ],
             ),
           );
         }
 
-        return ListView.builder(
-          padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 100.h),
-          itemCount: controller.danaMasukList.length,
-          itemBuilder: (_, i) =>
-              _buildCard(controller.danaMasukList[i]),
+        return RefreshIndicator(
+          onRefresh: () => controller.fetchAll(),
+          color: AppColor.primary,
+          backgroundColor: AppColor.secondary,
+          child: ListView.builder(
+            padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 100.h),
+            itemCount: controller.danaMasukList.length,
+            itemBuilder: (_, i) => _buildCard(controller.danaMasukList[i]),
+          ),
         );
       }),
     );
   }
 
   Widget _buildCard(DanaMasuk item) {
-    final statusColor = item.status == 'approved' ? Colors.green : Colors.orange;
+    final statusColor = item.status == 'approved'
+        ? Colors.green
+        : Colors.orange;
 
     return Container(
       margin: EdgeInsets.only(bottom: 10.h),
@@ -336,8 +368,11 @@ class DanamasukView extends GetView<DanamasukController> {
                 SizedBox(height: 2.h),
                 Row(
                   children: [
-                    Icon(Icons.calendar_today_outlined,
-                        size: 10.sp, color: Colors.grey),
+                    Icon(
+                      Icons.calendar_today_outlined,
+                      size: 10.sp,
+                      color: Colors.grey,
+                    ),
                     SizedBox(width: 3.w),
                     Text(
                       item.tanggal,
@@ -345,8 +380,11 @@ class DanamasukView extends GetView<DanamasukController> {
                     ),
                     if (item.user != null) ...[
                       SizedBox(width: 8.w),
-                      Icon(Icons.person_outline,
-                          size: 10.sp, color: Colors.grey),
+                      Icon(
+                        Icons.person_outline,
+                        size: 10.sp,
+                        color: Colors.grey,
+                      ),
                       SizedBox(width: 3.w),
                       Flexible(
                         child: Text(
@@ -373,12 +411,13 @@ class DanamasukView extends GetView<DanamasukController> {
               SizedBox(height: 4.h),
               if (item.status != null)
                 Container(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 8.w, vertical: 3.h),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20.r),
-                    border: Border.all(color: statusColor.withValues(alpha: 0.5)),
+                    border: Border.all(
+                      color: statusColor.withValues(alpha: 0.5),
+                    ),
                   ),
                   child: Text(
                     item.status == 'approved' ? 'Approved' : 'Pending',
@@ -417,15 +456,29 @@ class DanamasukView extends GetView<DanamasukController> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Filter Status',
-                style: AppFont.semiBold(16.sp, color: Colors.black87)),
+            Text(
+              'Filter Status',
+              style: AppFont.semiBold(16.sp, color: Colors.black87),
+            ),
             SizedBox(height: 16.h),
-            _filterOption('Semua', null, controller.selectedStatus,
-                () => controller.applyFilter()),
-            _filterOption('Approved', 'approved', controller.selectedStatus,
-                () => controller.applyFilter()),
-            _filterOption('Pending', 'pending', controller.selectedStatus,
-                () => controller.applyFilter()),
+            _filterOption(
+              'Semua',
+              null,
+              controller.selectedStatus,
+              () => controller.applyFilter(),
+            ),
+            _filterOption(
+              'Approved',
+              'approved',
+              controller.selectedStatus,
+              () => controller.applyFilter(),
+            ),
+            _filterOption(
+              'Pending',
+              'pending',
+              controller.selectedStatus,
+              () => controller.applyFilter(),
+            ),
             SizedBox(height: 8.h),
           ],
         ),
@@ -445,14 +498,24 @@ class DanamasukView extends GetView<DanamasukController> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Filter Jenis',
-                style: AppFont.semiBold(16.sp, color: Colors.black87)),
+            Text(
+              'Filter Jenis',
+              style: AppFont.semiBold(16.sp, color: Colors.black87),
+            ),
             SizedBox(height: 16.h),
-            _filterOption('Semua Jenis', null, controller.selectedJenis,
-                () => controller.applyFilter()),
+            _filterOption(
+              'Semua Jenis',
+              null,
+              controller.selectedJenis,
+              () => controller.applyFilter(),
+            ),
             ...DanamasukController.jenisOptions.entries.map(
-              (e) => _filterOption(e.value, e.key, controller.selectedJenis,
-                  () => controller.applyFilter()),
+              (e) => _filterOption(
+                e.value,
+                e.key,
+                controller.selectedJenis,
+                () => controller.applyFilter(),
+              ),
             ),
             SizedBox(height: 8.h),
           ],
@@ -473,14 +536,24 @@ class DanamasukView extends GetView<DanamasukController> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Filter Tahun',
-                style: AppFont.semiBold(16.sp, color: Colors.black87)),
+            Text(
+              'Filter Tahun',
+              style: AppFont.semiBold(16.sp, color: Colors.black87),
+            ),
             SizedBox(height: 16.h),
-            _filterOption('Semua Tahun', null, controller.selectedTahun,
-                () => controller.applyFilter()),
+            _filterOption(
+              'Semua Tahun',
+              null,
+              controller.selectedTahun,
+              () => controller.applyFilter(),
+            ),
             ...DanamasukController.tahunOptions.map(
-              (y) => _filterOption('$y', y, controller.selectedTahun,
-                  () => controller.applyFilter()),
+              (y) => _filterOption(
+                '$y',
+                y,
+                controller.selectedTahun,
+                () => controller.applyFilter(),
+              ),
             ),
             SizedBox(height: 8.h),
           ],
@@ -495,19 +568,23 @@ class DanamasukView extends GetView<DanamasukController> {
     Rxn<T> selected,
     VoidCallback onApply,
   ) {
-    return Obx(() => ListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(label,
-              style: AppFont.regular(14.sp, color: Colors.black87)),
-          trailing: selected.value == value
-              ? Icon(Icons.check_circle, color: AppColor.secondary, size: 20.sp)
-              : null,
-          onTap: () {
-            selected.value = value;
-            Get.back();
-            onApply();
-          },
-        ));
+    return Obx(
+      () => ListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Text(
+          label,
+          style: AppFont.regular(14.sp, color: Colors.black87),
+        ),
+        trailing: selected.value == value
+            ? Icon(Icons.check_circle, color: AppColor.secondary, size: 20.sp)
+            : null,
+        onTap: () {
+          selected.value = value;
+          Get.back();
+          onApply();
+        },
+      ),
+    );
   }
 
   // ─── Helpers ───────────────────────────────────────────────────────────────
@@ -542,7 +619,9 @@ class _SubmitSumbanganSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -566,35 +645,46 @@ class _SubmitSumbanganSheet extends StatelessWidget {
                   ),
                 ),
               ),
-              Text('Kirim Sumbangan',
-                  style: AppFont.semiBold(18.sp, color: Colors.black87)),
+              Text(
+                'Kirim Sumbangan',
+                style: AppFont.semiBold(18.sp, color: Colors.black87),
+              ),
               SizedBox(height: 20.h),
 
               // Nominal
-              Text('Nominal *',
-                  style: AppFont.semiBold(13.sp, color: Colors.black87)),
+              Text(
+                'Nominal *',
+                style: AppFont.semiBold(13.sp, color: Colors.black87),
+              ),
               SizedBox(height: 6.h),
-              Obx(() => TextField(
-                    controller: controller.nominalController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      hintText: 'Contoh: 50000',
-                      prefixText: 'Rp ',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.r)),
-                      errorText: controller.nominalError.value.isEmpty
-                          ? null
-                          : controller.nominalError.value,
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: 12.w, vertical: 14.h),
+              Obx(
+                () => TextField(
+                  controller: controller.nominalController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    hintText: 'Contoh: 50000',
+                    prefixText: 'Rp ',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
-                    onChanged: (_) => controller.nominalError.value = '',
-                  )),
+                    errorText: controller.nominalError.value.isEmpty
+                        ? null
+                        : controller.nominalError.value,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 14.h,
+                    ),
+                  ),
+                  onChanged: (_) => controller.nominalError.value = '',
+                ),
+              ),
               SizedBox(height: 16.h),
 
               // Keterangan
-              Text('Keterangan (opsional)',
-                  style: AppFont.semiBold(13.sp, color: Colors.black87)),
+              Text(
+                'Keterangan (opsional)',
+                style: AppFont.semiBold(13.sp, color: Colors.black87),
+              ),
               SizedBox(height: 6.h),
               TextField(
                 controller: controller.keteranganController,
@@ -603,98 +693,121 @@ class _SubmitSumbanganSheet extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: 'Keterangan sumbangan...',
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.r)),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 14.h,
+                  ),
                 ),
               ),
               SizedBox(height: 8.h),
 
               // Bukti foto
-              Text('Bukti Pembayaran (opsional)',
-                  style: AppFont.semiBold(13.sp, color: Colors.black87)),
+              Text(
+                'Bukti Pembayaran (opsional)',
+                style: AppFont.semiBold(13.sp, color: Colors.black87),
+              ),
               SizedBox(height: 6.h),
-              Obx(() => controller.selectedImage.value == null
-                  ? GestureDetector(
-                      onTap: () => controller.pickImage(),
-                      child: Container(
-                        width: double.infinity,
-                        height: 80.h,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade300),
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.cloud_upload_outlined,
-                                size: 28.sp, color: Colors.grey),
-                            SizedBox(height: 4.h),
-                            Text('Tap untuk upload',
-                                style: AppFont.regular(12.sp,
-                                    color: Colors.grey)),
-                          ],
-                        ),
-                      ),
-                    )
-                  : Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10.r),
-                          child: Image.file(
-                            controller.selectedImage.value!,
-                            height: 120.h,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
+              Obx(
+                () => controller.selectedImage.value == null
+                    ? GestureDetector(
+                        onTap: () => controller.pickImage(),
+                        child: Container(
+                          width: double.infinity,
+                          height: 80.h,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade300),
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.cloud_upload_outlined,
+                                size: 28.sp,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 4.h),
+                              Text(
+                                'Tap untuk upload',
+                                style: AppFont.regular(
+                                  12.sp,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        Positioned(
-                          top: 6,
-                          right: 6,
-                          child: GestureDetector(
-                            onTap: () => controller.removeImage(),
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                              padding: EdgeInsets.all(4.sp),
-                              child: Icon(Icons.close,
-                                  size: 16.sp, color: Colors.white),
+                      )
+                    : Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10.r),
+                            child: Image.file(
+                              controller.selectedImage.value!,
+                              height: 120.h,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        ),
-                      ],
-                    )),
+                          Positioned(
+                            top: 6,
+                            right: 6,
+                            child: GestureDetector(
+                              onTap: () => controller.removeImage(),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                padding: EdgeInsets.all(4.sp),
+                                child: Icon(
+                                  Icons.close,
+                                  size: 16.sp,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
 
               SizedBox(height: 24.h),
 
               // Submit button
-              Obx(() => SizedBox(
-                    width: double.infinity,
-                    height: 50.h,
-                    child: ElevatedButton(
-                      onPressed: controller.isSubmitting.value
-                          ? null
-                          : () => controller.submitSumbangan(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor.secondary,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r)),
-                        disabledBackgroundColor: Colors.grey,
+              Obx(
+                () => SizedBox(
+                  width: double.infinity,
+                  height: 50.h,
+                  child: ElevatedButton(
+                    onPressed: controller.isSubmitting.value
+                        ? null
+                        : () => controller.submitSumbangan(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColor.secondary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
                       ),
-                      child: controller.isSubmitting.value
-                          ? SizedBox(
-                              width: 20.w,
-                              height: 20.h,
-                              child: const CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white),
-                            )
-                          : Text('Kirim Sumbangan',
-                              style:
-                                  AppFont.semiBold(15.sp, color: Colors.white)),
+                      disabledBackgroundColor: Colors.grey,
                     ),
-                  )),
+                    child: controller.isSubmitting.value
+                        ? SizedBox(
+                            width: 20.w,
+                            height: 20.h,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            'Kirim Sumbangan',
+                            style: AppFont.semiBold(15.sp, color: Colors.white),
+                          ),
+                  ),
+                ),
+              ),
               SizedBox(height: 8.h),
             ],
           ),

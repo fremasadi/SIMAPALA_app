@@ -197,6 +197,7 @@ class TambahPeminjamanController extends GetxController {
         final errorMsg = peminjamanService.errorMessage.value.isNotEmpty
             ? peminjamanService.errorMessage.value
             : 'Gagal mengajukan peminjaman';
+        print('error $errorMsg');
 
         Get.snackbar(
           'Gagal',
