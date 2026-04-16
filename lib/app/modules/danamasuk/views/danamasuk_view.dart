@@ -24,15 +24,15 @@ class DanamasukView extends GetView<DanamasukController> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showSubmitBottomSheet(context),
-        backgroundColor: AppColor.primary,
-        icon: const Icon(Icons.volunteer_activism, color: Colors.white),
-        label: Text(
-          'Kirim Sumbangan',
-          style: AppFont.semiBold(14.sp, color: Colors.white),
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () => _showSubmitBottomSheet(context),
+      //   backgroundColor: AppColor.primary,
+      //   icon: const Icon(Icons.volunteer_activism, color: Colors.white),
+      //   label: Text(
+      //     'Kirim Sumbangan',
+      //     style: AppFont.semiBold(14.sp, color: Colors.white),
+      //   ),
+      // ),
     );
   }
 
