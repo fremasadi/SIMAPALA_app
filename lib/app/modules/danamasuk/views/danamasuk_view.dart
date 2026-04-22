@@ -19,8 +19,8 @@ class DanamasukView extends GetView<DanamasukController> {
           children: [
             _buildHeader(),
             _buildSummaryCard(),
-            _buildFilterSection(),
-            _buildList(),
+            // _buildFilterSection(),
+            // _buildList(),
           ],
         ),
       ),
