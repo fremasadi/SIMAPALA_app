@@ -63,7 +63,6 @@ class KasView extends GetView<KasController> {
                           SizedBox(height: 8.h),
                           Text(
                             controller.totalKasFormatted.value,
-                            // ✅ DARI API
                             style: TextStyle(
                               color: AppColor.primary,
                               fontSize: 36.sp,
@@ -73,7 +72,7 @@ class KasView extends GetView<KasController> {
                           SizedBox(height: 20.h),
                           ElevatedButton.icon(
                             onPressed: () {
-                              Get.to(TambahKasView());
+                              Get.to(() => const TambahKasView());
                             },
                             icon: const Icon(Icons.payment),
                             label: const Text('Bayar Kas'),
@@ -109,26 +108,6 @@ class KasView extends GetView<KasController> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  // Obx(
-                  //   () => controller.isLoading.value
-                  //       ? SizedBox(
-                  //           width: 20.w,
-                  //           height: 20.h,
-                  //           child: CircularProgressIndicator(
-                  //             strokeWidth: 2,
-                  //             color: AppColor.primary,
-                  //           ),
-                  //         )
-                  //       : IconButton(
-                  //           onPressed: () => controller.fetchKas(),
-                  //           icon: Icon(
-                  //             Icons.refresh,
-                  //             color: AppColor.primary,
-                  //             size: 24.sp,
-                  //           ),
-                  //           tooltip: 'Refresh',
-                  //         ),
-                  // ),
                 ],
               ),
             ),
@@ -140,7 +119,7 @@ class KasView extends GetView<KasController> {
                 }
 
                 if (controller.kasBulananList.isEmpty) {
-                  return const Center(child: Text('Belum ada data kas'));
+                  return const Center(child: Text('Belum ada data kas', style: TextStyle(color: Colors.white)));
                 }
 
                 return RefreshIndicator(
@@ -154,7 +133,6 @@ class KasView extends GetView<KasController> {
                     itemBuilder: (context, index) {
                       final kas = controller.kasBulananList[index];
 
-                      // ambil pembayaran pertama (biasanya cuma 1)
                       final pembayaran = kas.pembayarans.isNotEmpty
                           ? kas.pembayarans.first
                           : null;
@@ -163,9 +141,9 @@ class KasView extends GetView<KasController> {
                         jenis: 'Pemasukan',
                         keterangan: ' ${_formatBulan(kas.bulan)} ${kas.tahun}',
                         tanggal: pembayaran != null
-                            ? _formatDate(pembayaran.tanggalBayar)
+                            ? _formatDate(pembayaran.createdAt)
                             : '-',
-                        status: kas.status == 'lunas' ? 'Lunas' : 'Belum Lunas',
+                        status: kas.status.capitalizeFirst ?? kas.status,
                         detailClick: () {
                           showPembayaranListBottomSheet(
                             context,
@@ -199,6 +177,7 @@ class KasView extends GetView<KasController> {
       'November',
       'Desember',
     ];
+    if (bulan < 1 || bulan > 12) return '-';
     return bulanNama[bulan - 1];
   }
 
@@ -228,30 +207,17 @@ class KasView extends GetView<KasController> {
               color: Colors.green.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.arrow_upward, color: Colors.green, size: 24),
+            child: const Icon(Icons.arrow_upward, color: Colors.green, size: 24),
           ),
           SizedBox(width: 16.w),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  keterangan,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  tanggal,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
-                    fontSize: 12,
-                  ),
-                ),
-              ],
+            child: Text(
+              keterangan,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           Column(
@@ -273,11 +239,12 @@ class KasView extends GetView<KasController> {
                   ),
                 ),
               ),
+              const SizedBox(height: 4),
               GestureDetector(
                 onTap: detailClick,
                 child: Icon(
                   Icons.remove_red_eye,
-                  size: 29.sp,
+                  size: 24.sp,
                   color: AppColor.white,
                 ),
               ),

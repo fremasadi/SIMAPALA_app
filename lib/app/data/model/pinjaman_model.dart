@@ -2,100 +2,106 @@ import 'alat_model.dart';
 
 class Pinjaman {
   int id;
-  int userId;
-  String jenisTransaksi;
-  DateTime tanggalAjuan;
+  String? jenisTransaksi;
+  String? tanggalAjuan;
   DateTime tanggalPinjam;
   DateTime tanggalKembali;
   String status;
   String totalBiaya;
-  DateTime createdAt;
-  DateTime updatedAt;
-  List<DetailTransaksi> detailTransaksis;
+  int? jumlahAlat;
+  
+  // Detail fields
+  Map<String, dynamic>? pembayaran;
+  List<DetailPinjamAlat>? alats;
 
   Pinjaman({
     required this.id,
-    required this.userId,
-    required this.jenisTransaksi,
-    required this.tanggalAjuan,
+    this.jenisTransaksi,
+    this.tanggalAjuan,
     required this.tanggalPinjam,
     required this.tanggalKembali,
     required this.status,
     required this.totalBiaya,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.detailTransaksis,
+    this.jumlahAlat,
+    this.pembayaran,
+    this.alats,
   });
 
   factory Pinjaman.fromJson(Map<String, dynamic> json) => Pinjaman(
     id: json["id"],
-    userId: int.parse(json["user_id"].toString()),
     jenisTransaksi: json['jenis_transaksi'],
-    tanggalAjuan: DateTime.parse(json["tanggal_ajuan"]),
+    tanggalAjuan: json["tanggal_ajuan"],
     tanggalPinjam: DateTime.parse(json["tanggal_pinjam"]),
     tanggalKembali: DateTime.parse(json["tanggal_kembali"]),
     status: json["status"],
-    totalBiaya: json["total_biaya"],
-    createdAt: DateTime.parse(json["created_at"]),
-    updatedAt: DateTime.parse(json["updated_at"]),
-    detailTransaksis: List<DetailTransaksi>.from(
-      json["detail_transaksis"].map((x) => DetailTransaksi.fromJson(x)),
-    ),
+    totalBiaya: json["total_biaya"]?.toString() ?? "0.00",
+    jumlahAlat: json["jumlah_alat"],
+    pembayaran: json["pembayaran"],
+    alats: json["alats"] != null
+        ? List<DetailPinjamAlat>.from(
+            json["alats"].map((x) => DetailPinjamAlat.fromJson(x)),
+          )
+        : [],
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "user_id": userId,
     "jenis_transaksi": jenisTransaksi,
+    "tanggal_ajuan": tanggalAjuan,
     "tanggal_pinjam": tanggalPinjam.toIso8601String(),
     "tanggal_kembali": tanggalKembali.toIso8601String(),
     "status": status,
     "total_biaya": totalBiaya,
-    "created_at": createdAt.toIso8601String(),
-    "updated_at": updatedAt.toIso8601String(),
-    "detail_transaksis": List<dynamic>.from(
-      detailTransaksis.map((x) => x.toJson()),
-    ),
+    "jumlah_alat": jumlahAlat,
+    "pembayaran": pembayaran,
+    "alats": alats != null ? List<dynamic>.from(alats!.map((x) => x.toJson())) : null,
   };
 }
 
-class DetailTransaksi {
-  int id;
-  int transaksiId;
+class DetailPinjamAlat {
+  int detailId;
   int alatId;
-  dynamic kondisiKembali;
-  DateTime createdAt;
-  DateTime updatedAt;
-  Alat alat;
+  String kodeAlat;
+  String namaAlat;
+  String statusAlat;
+  String? kondisiKembali;
+  String? dendaTelat;
+  String? dendaRusak;
+  int totalDenda;
 
-  DetailTransaksi({
-    required this.id,
-    required this.transaksiId,
+  DetailPinjamAlat({
+    required this.detailId,
     required this.alatId,
-    required this.kondisiKembali,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.alat,
+    required this.kodeAlat,
+    required this.namaAlat,
+    required this.statusAlat,
+    this.kondisiKembali,
+    this.dendaTelat,
+    this.dendaRusak,
+    required this.totalDenda,
   });
 
-  factory DetailTransaksi.fromJson(Map<String, dynamic> json) =>
-      DetailTransaksi(
-        id: json["id"],
-        transaksiId: int.parse(json["transaksi_id"].toString()),
-        alatId: int.parse(json["alat_id"].toString()),
-        kondisiKembali: json["kondisi_kembali"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        alat: Alat.fromJson(json["alat"]),
-      );
+  factory DetailPinjamAlat.fromJson(Map<String, dynamic> json) => DetailPinjamAlat(
+    detailId: json["detail_id"],
+    alatId: json["alat_id"],
+    kodeAlat: json["kode_alat"],
+    namaAlat: json["nama_alat"],
+    statusAlat: json["status_alat"],
+    kondisiKembali: json["kondisi_kembali"],
+    dendaTelat: json["denda_telat"]?.toString(),
+    dendaRusak: json["denda_rusak"]?.toString(),
+    totalDenda: json["total_denda"] ?? 0,
+  );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "transaksi_id": transaksiId,
+    "detail_id": detailId,
     "alat_id": alatId,
+    "kode_alat": kodeAlat,
+    "nama_alat": namaAlat,
+    "status_alat": statusAlat,
     "kondisi_kembali": kondisiKembali,
-    "created_at": createdAt.toIso8601String(),
-    "updated_at": updatedAt.toIso8601String(),
-    "alat": alat.toJson(),
+    "denda_telat": dendaTelat,
+    "denda_rusak": dendaRusak,
+    "total_denda": totalDenda,
   };
 }

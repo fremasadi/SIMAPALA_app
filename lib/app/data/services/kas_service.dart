@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -39,8 +38,7 @@ class KasService extends GetxService {
         );
       } else {
         final body = jsonDecode(response.body);
-
-        throw body['message'] ?? 'Gagal mengambil data alat';
+        throw body['message'] ?? 'Gagal mengambil data kas';
       }
     } catch (e) {
       errorMessage.value = e.toString();
@@ -53,36 +51,29 @@ class KasService extends GetxService {
   Future<void> fetchKasOption() async {
     try {
       final token = await ApiGuard.getToken();
-      debugPrint('[KAS SERVICE] token from prefs: ada (${token.length} chars)');
-
       final response = await _provider.getKasOption(token: token);
       ApiGuard.checkResponse(response);
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
-        debugPrint('[KAS SERVICE] success key: ${body['success']}');
         final List data = body['data'];
-        debugPrint('[KAS SERVICE] data.length: ${data.length}');
 
         kasOptionList.assignAll(
           data.map((e) => KasBulananOption.fromJson(e)).toList(),
         );
-        debugPrint('[KAS SERVICE] kasOptionList.length after assign: ${kasOptionList.length}');
       } else {
         throw jsonDecode(response.body)['message'] ?? 'Gagal mengambil opsi kas';
       }
     } catch (e) {
-      debugPrint('[KAS SERVICE] ERROR: $e');
       errorMessage.value = e.toString();
     }
   }
 
   /// ================= SUBMIT KAS PEMBAYARAN =================
-  Future<void> submitKasPembayaran({
+  Future<Map<String, dynamic>> submitKasPembayaran({
     required String kasBulananId,
     required String nominal,
-    required String metode,
-    File? buktiFile,
+    String keterangan = '',
   }) async {
     final token = await ApiGuard.getToken();
 
@@ -90,22 +81,34 @@ class KasService extends GetxService {
       token: token,
       kasBulananId: kasBulananId,
       nominal: nominal,
-      metode: metode,
-      buktiFile: buktiFile,
+      keterangan: keterangan,
     );
     ApiGuard.checkResponse(response);
-
-    debugPrint('[KAS SERVICE] submitKasPembayaran statusCode: ${response.statusCode}');
-    debugPrint('[KAS SERVICE] submitKasPembayaran body: ${response.body}');
 
     final body = jsonDecode(response.body);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      if (body['success'] != true) {
-        throw body['message'] ?? 'Gagal mengirim pembayaran';
+      if (body['success'] == true) {
+        return body;
+      } else {
+        throw body['message'] ?? 'Gagal membuat pembayaran';
       }
     } else {
-      throw body['message'] ?? 'Gagal mengirim pembayaran';
+      throw body['message'] ?? 'Gagal membuat pembayaran';
+    }
+  }
+
+  /// ================= CEK STATUS PEMBAYARAN =================
+  Future<Map<String, dynamic>> checkPaymentStatus(int id) async {
+    final token = await ApiGuard.getToken();
+    final response = await _provider.getStatusPembayaran(token: token, id: id);
+    ApiGuard.checkResponse(response);
+
+    final body = jsonDecode(response.body);
+    if (body['success'] == true) {
+      return body;
+    } else {
+      throw body['message'] ?? 'Gagal mengecek status';
     }
   }
 

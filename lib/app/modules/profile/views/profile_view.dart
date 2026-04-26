@@ -124,25 +124,25 @@ class ProfileView extends GetView<ProfileController> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.green.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.green),
-                          ),
-                          child: const Text(
-                            'Anggota Aktif',
-                            style: TextStyle(
-                              color: Colors.green,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
+                        // Container(
+                        //   padding: const EdgeInsets.symmetric(
+                        //     horizontal: 16,
+                        //     vertical: 6,
+                        //   ),
+                        //   decoration: BoxDecoration(
+                        //     color: Colors.green.withValues(alpha: 0.2),
+                        //     borderRadius: BorderRadius.circular(20),
+                        //     border: Border.all(color: Colors.green),
+                        //   ),
+                        //   child: const Text(
+                        //     'Anggota Aktif',
+                        //     style: TextStyle(
+                        //       color: Colors.green,
+                        //       fontSize: 12,
+                        //       fontWeight: FontWeight.w600,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   );

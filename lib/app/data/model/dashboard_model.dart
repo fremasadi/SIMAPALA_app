@@ -36,22 +36,34 @@ class DashboardStats {
 
 class DashboardAktivitas {
   final int id;
+  final String tipe;
   final String judul;
   final String status;
+  final int? nominal;
+  final String? nominalFormatted;
+  final String? periodeKas;
   final String waktu;
 
   DashboardAktivitas({
     required this.id,
+    required this.tipe,
     required this.judul,
     required this.status,
+    this.nominal,
+    this.nominalFormatted,
+    this.periodeKas,
     required this.waktu,
   });
 
   factory DashboardAktivitas.fromJson(Map<String, dynamic> json) {
     return DashboardAktivitas(
       id: json['id'],
+      tipe: json['tipe'] ?? '',
       judul: json['judul'],
       status: json['status'],
+      nominal: json['nominal'],
+      nominalFormatted: json['nominal_formatted'],
+      periodeKas: json['periode_kas'],
       waktu: json['waktu'],
     );
   }

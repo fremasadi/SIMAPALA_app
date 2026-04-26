@@ -22,7 +22,7 @@ class TambahPeminjamanView extends GetView<TambahPeminjamanController> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      Get.back(result: true); // ← trigger refresh
+                      Get.back(result: true);
                     },
                     icon: Icon(
                       Icons.arrow_back,
@@ -56,7 +56,7 @@ class TambahPeminjamanView extends GetView<TambahPeminjamanController> {
                     ),
                   ),
                   Obx(() {
-                    if (controller.selectedAlatList.isEmpty) {
+                    if (controller.selectedItems.isEmpty) {
                       return const SizedBox.shrink();
                     }
                     return TextButton.icon(
@@ -75,504 +75,261 @@ class TambahPeminjamanView extends GetView<TambahPeminjamanController> {
                   onRefresh: () async => controller.fetchAlat(),
                   color: AppColor.primary,
                   child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // SECTION: PILIH ALAT
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.inventory_2_outlined,
-                            color: AppColor.primary,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Pilih Alat',
-                            style: TextStyle(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // SECTION: PILIH ALAT
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.inventory_2_outlined,
                               color: AppColor.primary,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.bold,
+                              size: 20,
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Tap untuk memilih, tap lagi untuk membatalkan',
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.5),
-                          fontSize: 11.sp,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      Obx(() {
-                        if (controller.isLoading.value) {
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(40),
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        }
-
-                        if (controller.alatList.isEmpty) {
-                          return Center(
-                            child: Container(
-                              padding: const EdgeInsets.all(40),
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.inventory_2_outlined,
-                                    size: 64,
-                                    color: Colors.white.withValues(alpha: 0.3),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    'Tidak ada alat tersedia',
-                                    style: TextStyle(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.7,
-                                      ),
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
+                            const SizedBox(width: 8),
+                            Text(
+                              'Pilih Alat',
+                              style: TextStyle(
+                                color: AppColor.primary,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          );
-                        }
+                          ],
+                        ),
+                        const SizedBox(height: 16),
 
-                        return Wrap(
-                          spacing: 12,
-                          runSpacing: 12,
-                          children: controller.alatList.map((alat) {
-                            final isSelected = controller.isAlatSelected(alat);
-                            final isAvailable =
-                                alat.status.toLowerCase() == 'tersedia';
+                        Obx(() {
+                          if (controller.isLoading.value) {
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(40),
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
 
-                            return GestureDetector(
-                              onTap: () => controller.toggleSelectAlat(alat),
-                              child: Container(
-                                width: (Get.width - 52) / 2,
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppColor.primary.withValues(alpha: 0.2)
-                                      : Colors.white.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? AppColor.primary
-                                        : Colors.white.withValues(alpha: 0.1),
-                                    width: isSelected ? 2 : 1,
-                                  ),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Icon & Checkbox
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color: isAvailable
-                                                ? Colors.green.withValues(
-                                                    alpha: 0.2,
-                                                  )
-                                                : Colors.orange.withValues(
-                                                    alpha: 0.2,
-                                                  ),
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                          child: Icon(
-                                            Icons.backpack,
-                                            color: isAvailable
-                                                ? Colors.green
-                                                : Colors.orange,
-                                            size: 24,
-                                          ),
-                                        ),
-                                        AnimatedContainer(
-                                          duration: const Duration(
-                                            milliseconds: 200,
-                                          ),
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
-                                            color: isSelected
-                                                ? AppColor.primary
-                                                : Colors.white.withValues(
-                                                    alpha: 0.2,
-                                                  ),
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: isSelected
-                                                  ? AppColor.primary
-                                                  : Colors.white.withValues(
-                                                      alpha: 0.5,
-                                                    ),
-                                              width: 2,
-                                            ),
-                                          ),
-                                          child: Icon(
-                                            isSelected
-                                                ? Icons.check
-                                                : Icons.add,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12),
+                          final distinctAlats = controller.getDistinctAlatList();
 
-                                    // Nama Alat
-                                    Text(
-                                      alat.namaAlat,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: 8),
-
-                                    // Harga
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.payments_outlined,
-                                          size: 14,
-                                          color: AppColor.primary,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Expanded(
-                                          child: Text(
-                                            'Rp ${alat.hargaSewa}/hari',
-                                            style: TextStyle(
-                                              color: AppColor.primary,
-                                              fontSize: 11.sp,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-
-                                    // Status
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: isAvailable
-                                            ? Colors.green.withValues(
-                                                alpha: 0.2,
-                                              )
-                                            : Colors.orange.withValues(
-                                                alpha: 0.2,
-                                              ),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        alat.status,
-                                        style: TextStyle(
-                                          color: isAvailable
-                                              ? Colors.green
-                                              : Colors.orange,
-                                          fontSize: 10.sp,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                          if (distinctAlats.isEmpty) {
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(40),
+                                child: Text(
+                                  'Tidak ada alat tersedia',
+                                  style: TextStyle(color: Colors.white70),
                                 ),
                               ),
                             );
-                          }).toList(),
-                        );
-                      }),
+                          }
 
-                      const SizedBox(height: 24),
+                          return ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: distinctAlats.length,
+                            separatorBuilder: (_, __) => const SizedBox(height: 12),
+                            itemBuilder: (context, index) {
+                              final alat = distinctAlats[index];
+                              final totalStock = controller.getStockCount(alat.namaAlat);
 
-                      // SELECTED ITEMS CHIPS
-                      Obx(() {
-                        if (controller.selectedAlatList.isEmpty) {
-                          return const SizedBox.shrink();
-                        }
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.shopping_basket_outlined,
-                                  color: AppColor.primary,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'Alat Dipilih',
-                                  style: TextStyle(
-                                    color: AppColor.primary,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: controller.selectedAlatList.map((alat) {
+                              return Obx(() {
+                                final currentQty = controller.getQuantity(alat.namaAlat);
                                 return Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 8,
-                                  ),
+                                  padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: AppColor.primary.withValues(
-                                      alpha: 0.2,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
+                                    color: Colors.white.withValues(alpha: 0.05),
+                                    borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
-                                      color: AppColor.primary.withValues(
-                                        alpha: 0.5,
-                                      ),
+                                      color: currentQty > 0
+                                          ? AppColor.primary
+                                          : Colors.white.withValues(alpha: 0.1),
                                     ),
                                   ),
                                   child: Row(
-                                    mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(
-                                        Icons.backpack,
-                                        size: 16,
-                                        color: AppColor.primary,
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        alat.namaAlat,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w500,
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: totalStock > 0 
+                                              ? AppColor.primary.withValues(alpha: 0.1)
+                                              : Colors.grey.withValues(alpha: 0.1),
+                                          borderRadius: BorderRadius.circular(12),
                                         ),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      GestureDetector(
-                                        onTap: () =>
-                                            controller.removeSelectedAlat(alat),
                                         child: Icon(
-                                          Icons.close,
-                                          size: 16,
-                                          color: Colors.red.shade300,
+                                          Icons.backpack, 
+                                          color: totalStock > 0 ? AppColor.primary : Colors.grey
                                         ),
                                       ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              alat.namaAlat,
+                                              style: TextStyle(
+                                                color: totalStock > 0 ? Colors.white : Colors.white54,
+                                                fontSize: 14.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              totalStock > 0 ? 'Stok: $totalStock' : 'Stok Habis',
+                                              style: TextStyle(
+                                                color: totalStock > 0 ? AppColor.primary : Colors.red,
+                                                fontSize: 12.sp,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      if (totalStock > 0)
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              onPressed: () => controller.decrementItem(alat.namaAlat),
+                                              icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
+                                            ),
+                                            Text(
+                                              '$currentQty',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            IconButton(
+                                              onPressed: () => controller.incrementItem(alat.namaAlat),
+                                              icon: const Icon(Icons.add_circle_outline, color: Colors.green),
+                                            ),
+                                          ],
+                                        )
+                                      else
+                                        Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red.withValues(alpha: 0.1),
+                                            borderRadius: BorderRadius.circular(8.r),
+                                            border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                                          ),
+                                          child: Text(
+                                            'HABIS',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 10.sp,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 );
-                              }).toList(),
-                            ),
-                            const SizedBox(height: 24),
-                          ],
-                        );
-                      }),
+                              });
+                            },
+                          );
+                        }),
 
-                      // SECTION: FORM TANGGAL
-                      Obx(() {
-                        if (controller.selectedAlatList.isEmpty) {
-                          return const SizedBox.shrink();
-                        }
+                        const SizedBox(height: 24),
 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.calendar_month_outlined,
-                                  color: AppColor.primary,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'Periode Peminjaman',
-                                  style: TextStyle(
-                                    color: AppColor.primary,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
+                        // SECTION: FORM TANGGAL
+                        Obx(() {
+                          if (controller.selectedItems.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
 
-                            // Tanggal Pinjam
-                            _buildDateField(
-                              label: 'Tanggal Pinjam',
-                              icon: Icons.event_outlined,
-                              selectedDate: controller.tanggalPinjam.value,
-                              onTap: () => _selectDate(
-                                context,
-                                controller.tanggalPinjam.value,
-                                (date) => controller.setTanggalPinjam(date),
-                                firstDate: DateTime.now(),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-
-                            // Tanggal Kembali
-                            _buildDateField(
-                              label: 'Tanggal Kembali',
-                              icon: Icons.event_available_outlined,
-                              selectedDate: controller.tanggalKembali.value,
-                              onTap: () => _selectDate(
-                                context,
-                                controller.tanggalKembali.value,
-                                (date) => controller.setTanggalKembali(date),
-                                firstDate:
-                                    controller.tanggalPinjam.value ??
-                                    DateTime.now(),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-
-                            // Summary Card
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: AppColor.primary.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: AppColor.primary.withValues(
-                                    alpha: 0.3,
-                                  ),
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
                                 children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.receipt_long_outlined,
-                                        color: AppColor.primary,
-                                        size: 20,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'Ringkasan Peminjaman',
-                                        style: TextStyle(
-                                          color: AppColor.primary,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
+                                  Icon(
+                                    Icons.calendar_month_outlined,
+                                    color: AppColor.primary,
+                                    size: 20,
                                   ),
-                                  const SizedBox(height: 12),
-                                  _buildSummaryRow(
-                                    'Jumlah Alat',
-                                    '${controller.selectedAlatList.length} item',
-                                  ),
-                                  const SizedBox(height: 8),
-                                  _buildSummaryRow(
-                                    'Durasi',
-                                    controller.getDurasi(),
-                                  ),
-                                  const Divider(
-                                    color: Colors.white24,
-                                    height: 24,
-                                  ),
-                                  // _buildSummaryRow(
-                                  //   'Total Biaya',
-                                  //   controller.getTotalBiaya(),
-                                  //   isTotal: true,
-                                  // ),
-                                ],
-                              ),
-                            ),
-
-                            const SizedBox(height: 32),
-
-                            // Submit Button
-                            Obx(
-                              () => SizedBox(
-                                width: double.infinity,
-                                height: 56,
-                                child: ElevatedButton.icon(
-                                  onPressed:
-                                      controller.isValid() &&
-                                          !controller
-                                              .peminjamanService
-                                              .isLoading
-                                              .value
-                                      ? () => controller.submitPeminjaman()
-                                      : null,
-                                  icon:
-                                      controller
-                                          .peminjamanService
-                                          .isLoading
-                                          .value
-                                      ? const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                                  Colors.white,
-                                                ),
-                                          ),
-                                        )
-                                      : const Icon(Icons.send_outlined),
-                                  label: Text(
-                                    controller.peminjamanService.isLoading.value
-                                        ? 'Mengajukan...'
-                                        : 'Ajukan Peminjaman',
-                                    style: const TextStyle(
-                                      fontSize: 16,
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Periode Peminjaman',
+                                    style: TextStyle(
+                                      color: AppColor.primary,
+                                      fontSize: 16.sp,
                                       fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.5,
                                     ),
                                   ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+
+                              _buildDateField(
+                                label: 'Tanggal Pinjam',
+                                icon: Icons.event_outlined,
+                                selectedDate: controller.tanggalPinjam.value,
+                                onTap: () => _selectDate(
+                                  context,
+                                  controller.tanggalPinjam.value,
+                                  (date) => controller.setTanggalPinjam(date),
+                                  firstDate: DateTime.now(),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+
+                              _buildDateField(
+                                label: 'Tanggal Kembali',
+                                icon: Icons.event_available_outlined,
+                                selectedDate: controller.tanggalKembali.value,
+                                onTap: () => _selectDate(
+                                  context,
+                                  controller.tanggalKembali.value,
+                                  (date) => controller.setTanggalKembali(date),
+                                  firstDate: controller.tanggalPinjam.value ?? DateTime.now(),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: AppColor.primary.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: AppColor.primary.withValues(alpha: 0.3)),
+                                ),
+                                child: Column(
+                                  children: [
+                                    _buildSummaryRow('Durasi', controller.getDurasi()),
+                                    const Divider(color: Colors.white24, height: 24),
+                                    _buildSummaryRow('Total Biaya', controller.getTotalBiaya(), isTotal: true),
+                                  ],
+                                ),
+                              ),
+
+                              const SizedBox(height: 32),
+
+                              SizedBox(
+                                width: double.infinity,
+                                height: 56,
+                                child: ElevatedButton(
+                                  onPressed: controller.isValid() && !controller.isLoading.value
+                                      ? () => controller.submitPeminjaman()
+                                      : null,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColor.primary,
                                     foregroundColor: AppColor.secondary,
-                                    disabledBackgroundColor: Colors.grey
-                                        .withValues(alpha: 0.3),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    elevation: 8,
-                                    shadowColor: AppColor.primary.withValues(
-                                      alpha: 0.5,
-                                    ),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                   ),
+                                  child: controller.isLoading.value
+                                      ? const CircularProgressIndicator(color: Colors.white)
+                                      : const Text('Ajukan Peminjaman', style: TextStyle(fontWeight: FontWeight.bold)),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 32),
-                          ],
-                        );
-                      }),
-                    ],
+                              const SizedBox(height: 32),
+                            ],
+                          );
+                        }),
+                      ],
+                    ),
                   ),
-                ),
                 ),
               ),
             ],
@@ -595,49 +352,25 @@ class TambahPeminjamanView extends GetView<TambahPeminjamanController> {
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColor.primary.withValues(alpha: 0.3),
-            width: 1,
-          ),
+          border: Border.all(color: AppColor.primary.withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
-            Icon(icon, color: AppColor.primary, size: 24),
+            Icon(icon, color: AppColor.primary),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      color: AppColor.primary.withValues(alpha: 0.7),
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
+                  Text(label, style: TextStyle(color: Colors.white70, fontSize: 12)),
                   Text(
                     selectedDate != null
-                        ? DateFormat(
-                            'EEEE, dd MMMM yyyy',
-                            'id_ID',
-                          ).format(selectedDate)
+                        ? DateFormat('EEEE, dd MMMM yyyy', 'id_ID').format(selectedDate)
                         : 'Pilih tanggal',
-                    style: TextStyle(
-                      color: selectedDate != null
-                          ? Colors.white
-                          : Colors.white.withValues(alpha: 0.5),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
-            ),
-            Icon(
-              Icons.calendar_today,
-              color: AppColor.primary.withValues(alpha: 0.5),
-              size: 20,
             ),
           ],
         ),
@@ -649,60 +382,19 @@ class TambahPeminjamanView extends GetView<TambahPeminjamanController> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.7),
-            fontSize: isTotal ? 14.sp : 13.sp,
-            fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            color: isTotal ? AppColor.primary : Colors.white,
-            fontSize: isTotal ? 16.sp : 13.sp,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        Text(label, style: TextStyle(color: Colors.white70, fontSize: isTotal ? 16 : 14)),
+        Text(value, style: TextStyle(color: isTotal ? AppColor.primary : Colors.white, fontWeight: FontWeight.bold, fontSize: isTotal ? 18 : 14)),
       ],
     );
   }
 
-  Future<void> _selectDate(
-    BuildContext context,
-    DateTime? initialDate,
-    Function(DateTime) onDateSelected, {
-    DateTime? firstDate,
-  }) async {
-    final DateTime effectiveFirstDate = firstDate ?? DateTime.now();
-    final DateTime effectiveInitialDate =
-        (initialDate != null && !initialDate.isBefore(effectiveFirstDate))
-            ? initialDate
-            : effectiveFirstDate;
+  Future<void> _selectDate(BuildContext context, DateTime? initialDate, Function(DateTime) onDateSelected, {required DateTime firstDate}) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: effectiveInitialDate,
-      firstDate: effectiveFirstDate,
+      initialDate: (initialDate != null && !initialDate.isBefore(firstDate)) ? initialDate : firstDate,
+      firstDate: firstDate,
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.dark(
-              primary: AppColor.primary,
-              onPrimary: AppColor.secondary,
-              surface: AppColor.secondary,
-              onSurface: Colors.white,
-            ),
-            dialogTheme: DialogThemeData(backgroundColor: AppColor.secondary),
-          ),
-          child: child!,
-        );
-      },
     );
-
-    if (picked != null) {
-      onDateSelected(picked);
-    }
+    if (picked != null) onDateSelected(picked);
   }
 }

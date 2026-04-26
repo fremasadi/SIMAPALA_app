@@ -3,30 +3,28 @@ class Pembayaran {
   int kasBulananId;
   int userId;
   int nominal;
-  String metode;
-  dynamic buktiBayar;
+  String? metode;
+  String? paymentUrl;
+  String? orderId;
+  String? snapToken;
   String status;
-  DateTime tanggalBayar;
-  String keterangan;
-  dynamic verifiedBy;
-  dynamic verifiedAt;
   DateTime createdAt;
   DateTime updatedAt;
+  String? keterangan;
 
   Pembayaran({
     required this.id,
     required this.kasBulananId,
     required this.userId,
     required this.nominal,
-    required this.metode,
-    required this.buktiBayar,
+    this.metode,
+    this.paymentUrl,
+    this.orderId,
+    this.snapToken,
     required this.status,
-    required this.tanggalBayar,
-    required this.keterangan,
-    required this.verifiedBy,
-    required this.verifiedAt,
     required this.createdAt,
     required this.updatedAt,
+    this.keterangan,
   });
 
   /// 🔁 FROM JSON
@@ -36,14 +34,13 @@ class Pembayaran {
     userId: int.parse(json['user_id'].toString()),
     nominal: json['nominal'],
     metode: json['metode'],
-    buktiBayar: json['bukti_bayar'],
+    paymentUrl: json['payment_url'],
+    orderId: json['order_id'],
+    snapToken: json['snap_token'],
     status: json['status'],
-    tanggalBayar: DateTime.parse(json['tanggal_bayar']),
-    keterangan: json['keterangan'] ?? '',
-    verifiedBy: json['verified_by'],
-    verifiedAt: json['verified_at'],
     createdAt: DateTime.parse(json['created_at']),
     updatedAt: DateTime.parse(json['updated_at']),
+    keterangan: json['keterangan'],
   );
 
   /// 🔁 TO JSON
@@ -53,13 +50,12 @@ class Pembayaran {
     'user_id': userId,
     'nominal': nominal,
     'metode': metode,
-    'bukti_bayar': buktiBayar,
+    'payment_url': paymentUrl,
+    'order_id': orderId,
+    'snap_token': snapToken,
     'status': status,
-    'tanggal_bayar': tanggalBayar.toIso8601String(),
-    'keterangan': keterangan,
-    'verified_by': verifiedBy,
-    'verified_at': verifiedAt,
     'created_at': createdAt.toIso8601String(),
     'updated_at': updatedAt.toIso8601String(),
+    'keterangan': keterangan,
   };
 }

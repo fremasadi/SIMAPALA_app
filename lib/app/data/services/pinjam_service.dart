@@ -22,7 +22,7 @@ class PeminjamanService extends GetxService {
 
       final token = await ApiGuard.getToken();
 
-      final response = await _provider.getPinjmana(token: token);
+      final response = await _provider.getPinjam(token: token);
       ApiGuard.checkResponse(response);
 
       if (response.statusCode == 200) {
@@ -31,7 +31,7 @@ class PeminjamanService extends GetxService {
         pinjamanList.assignAll(data.map((e) => Pinjaman.fromJson(e)).toList());
       } else {
         final body = jsonDecode(response.body);
-        throw body['message'] ?? 'Gagal mengambil data alat';
+        throw body['message'] ?? 'Gagal mengambil data peminjaman';
       }
     } catch (e) {
       errorMessage.value = e.toString();
@@ -40,11 +40,24 @@ class PeminjamanService extends GetxService {
     }
   }
 
+  Future<Pinjaman> fetchPeminjamanDetail(int id) async {
+    final token = await ApiGuard.getToken();
+    final response = await _provider.getPinjamDetail(token: token, id: id);
+    ApiGuard.checkResponse(response);
+
+    final body = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      return Pinjaman.fromJson(body['data']);
+    } else {
+      throw body['message'] ?? 'Gagal mengambil detail peminjaman';
+    }
+  }
+
   /// 📤 AJUKAN PEMINJAMAN
   Future<void> postPinjam({
     required String tanggalPinjam,
     required String tanggalKembali,
-    required List<int> alatIds,
+    required List<Map<String, dynamic>> items,
   }) async {
     try {
       isLoading.value = true;
@@ -57,7 +70,7 @@ class PeminjamanService extends GetxService {
         token: token,
         tanggalPinjam: tanggalPinjam,
         tanggalKembali: tanggalKembali,
-        alatIds: alatIds,
+        items: items,
       );
       ApiGuard.checkResponse(response);
 

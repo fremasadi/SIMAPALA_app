@@ -12,7 +12,12 @@ class TambahPeminjamanController extends GetxController {
   // Observable variables
   var isLoading = false.obs;
   var alatList = <Alat>[].obs;
-  var selectedAlatList = <Alat>[].obs;
+  
+  // Map of Alat Name to quantity
+  var selectedItems = <String, int>{}.obs; 
+  // Map of Alat Name to one of its representative Alat object
+  var nameToAlat = <String, Alat>{};
+
   var tanggalPinjam = Rx<DateTime?>(null);
   var tanggalKembali = Rx<DateTime?>(null);
 
@@ -25,51 +30,57 @@ class TambahPeminjamanController extends GetxController {
   void fetchAlat() async {
     isLoading.value = true;
     await _alatService.fetchAlat();
+    
     alatList.assignAll(_alatService.alatList);
+    
+    // Initialize nameToAlat mapping for quick lookup
+    nameToAlat.clear();
+    for (var alat in alatList) {
+      if (!nameToAlat.containsKey(alat.namaAlat)) {
+        nameToAlat[alat.namaAlat] = alat;
+      }
+    }
+    
     isLoading.value = false;
   }
 
-  // Toggle select/unselect alat (multi-select)
-  void toggleSelectAlat(Alat alat) {
-    if (alat.status.toLowerCase() != 'tersedia') {
+  int getStockCount(String namaAlat) {
+    return alatList.where((a) => a.namaAlat == namaAlat && a.status.toLowerCase() == 'tersedia').length;
+  }
+
+  void incrementItem(String namaAlat) {
+    int current = selectedItems[namaAlat] ?? 0;
+    int stock = getStockCount(namaAlat);
+    
+    if (current < stock) {
+      selectedItems[namaAlat] = current + 1;
+    } else {
       Get.snackbar(
-        'Tidak Tersedia',
-        'Alat ${alat.namaAlat} sedang dipinjam',
-        snackPosition: SnackPosition.BOTTOM,
+        'Stok Terbatas',
+        'Stok $namaAlat yang tersedia hanya $stock unit',
         backgroundColor: Colors.orange,
         colorText: Colors.white,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
-        duration: const Duration(seconds: 2),
       );
-      return;
-    }
-
-    final index = selectedAlatList.indexWhere((a) => a.id == alat.id);
-
-    if (index >= 0) {
-      selectedAlatList.removeAt(index);
-    } else {
-      selectedAlatList.add(alat);
     }
   }
 
-  // Check if alat is selected
-  bool isAlatSelected(Alat alat) {
-    return selectedAlatList.any((a) => a.id == alat.id);
+  void decrementItem(String namaAlat) {
+    int current = selectedItems[namaAlat] ?? 0;
+    if (current > 0) {
+      if (current == 1) {
+        selectedItems.remove(namaAlat);
+      } else {
+        selectedItems[namaAlat] = current - 1;
+      }
+    }
   }
 
-  // Remove alat from selection
-  void removeSelectedAlat(Alat alat) {
-    selectedAlatList.removeWhere((a) => a.id == alat.id);
-  }
+  int getQuantity(String namaAlat) => selectedItems[namaAlat] ?? 0;
 
-  // Clear all selections
   void clearAllSelections() {
-    selectedAlatList.clear();
+    selectedItems.clear();
   }
 
-  // Set tanggal pinjam
   void setTanggalPinjam(DateTime date) {
     tanggalPinjam.value = date;
     if (tanggalKembali.value != null && tanggalKembali.value!.isBefore(date)) {
@@ -77,71 +88,42 @@ class TambahPeminjamanController extends GetxController {
     }
   }
 
-  // Set tanggal kembali
   void setTanggalKembali(DateTime date) {
     if (tanggalPinjam.value == null) {
-      Get.snackbar(
-        'Perhatian',
-        'Pilih tanggal pinjam terlebih dahulu',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
-        duration: const Duration(seconds: 2),
-      );
+      Get.snackbar('Perhatian', 'Pilih tanggal pinjam terlebih dahulu');
       return;
     }
-
     if (date.isBefore(tanggalPinjam.value!)) {
-      Get.snackbar(
-        'Perhatian',
-        'Tanggal kembali tidak boleh sebelum tanggal pinjam',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
-        duration: const Duration(seconds: 2),
-      );
+      Get.snackbar('Perhatian', 'Tanggal kembali tidak boleh sebelum tanggal pinjam');
       return;
     }
-
     tanggalKembali.value = date;
   }
 
-  // Get durasi peminjaman
   String getDurasi() {
-    if (tanggalPinjam.value == null || tanggalKembali.value == null) {
-      return '-';
-    }
-
-    final durasi =
-        tanggalKembali.value!.difference(tanggalPinjam.value!).inDays + 1;
+    if (tanggalPinjam.value == null || tanggalKembali.value == null) return '-';
+    final durasi = tanggalKembali.value!.difference(tanggalPinjam.value!).inDays + 1;
     return '$durasi hari';
   }
 
-  // Get total biaya
   String getTotalBiaya() {
-    if (selectedAlatList.isEmpty ||
-        tanggalPinjam.value == null ||
-        tanggalKembali.value == null) {
+    if (selectedItems.isEmpty || tanggalPinjam.value == null || tanggalKembali.value == null) {
       return 'Rp 0';
     }
 
-    final durasi =
-        tanggalKembali.value!.difference(tanggalPinjam.value!).inDays + 1;
+    final durasi = tanggalKembali.value!.difference(tanggalPinjam.value!).inDays + 1;
     int total = 0;
 
-    for (var alat in selectedAlatList) {
-      final hargaPerHari = int.parse(alat.hargaSewa.toString());
-      total += durasi * hargaPerHari;
-    }
+    selectedItems.forEach((name, qty) {
+      final alat = nameToAlat[name];
+      if (alat != null) {
+        total += (durasi * alat.hargaSewa * qty);
+      }
+    });
 
     return 'Rp ${_formatCurrency(total)}';
   }
 
-  // Format currency
   String _formatCurrency(int value) {
     return value.toString().replaceAllMapped(
       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
@@ -149,94 +131,59 @@ class TambahPeminjamanController extends GetxController {
     );
   }
 
-  // Validate form
   bool isValid() {
-    return selectedAlatList.isNotEmpty &&
+    return selectedItems.isNotEmpty &&
         tanggalPinjam.value != null &&
         tanggalKembali.value != null;
   }
 
-  // Submit peminjaman
   Future<void> submitPeminjaman() async {
+    if (!isValid()) return;
+    
     try {
-      // Get alat IDs
-      final alatIds = selectedAlatList.map((alat) => alat.id).toList();
+      isLoading.value = true;
+      
+      List<Map<String, dynamic>> items = [];
+      selectedItems.forEach((name, qty) {
+        final alat = nameToAlat[name];
+        if (alat != null) {
+          items.add({
+            'alat_id': alat.id,
+            'jumlah': qty,
+          });
+        }
+      });
 
-      // Format dates
       final dateFormat = DateFormat('yyyy-MM-dd');
       final tanggalPinjamStr = dateFormat.format(tanggalPinjam.value!);
       final tanggalKembaliStr = dateFormat.format(tanggalKembali.value!);
 
-      // Call service
       await peminjamanService.postPinjam(
         tanggalPinjam: tanggalPinjamStr,
         tanggalKembali: tanggalKembaliStr,
-        alatIds: alatIds,
+        items: items, 
       );
 
-      // Check if success
       if (peminjamanService.isSuccess.value == true) {
-        Get.snackbar(
-          '✓ Berhasil',
-          'Peminjaman berhasil diajukan',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
-          duration: const Duration(seconds: 3),
-          icon: const Icon(Icons.check_circle, color: Colors.white),
-        );
-
-        // ⏱️ TUNGGU 1 FRAME UI
-        await Future.delayed(const Duration(milliseconds: 300));
-        resetForm();
-        fetchAlat();
+        Get.back(result: true);
+        Get.snackbar('Berhasil', 'Permintaan pinjam alat berhasil dibuat', backgroundColor: Colors.green, colorText: Colors.white);
       } else {
-        // Show error message
-        final errorMsg = peminjamanService.errorMessage.value.isNotEmpty
-            ? peminjamanService.errorMessage.value
-            : 'Gagal mengajukan peminjaman';
-        print('error $errorMsg');
-
-        Get.snackbar(
-          'Gagal',
-          errorMsg,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
-          duration: const Duration(seconds: 3),
-          icon: const Icon(Icons.error_outline, color: Colors.white),
-        );
+        throw peminjamanService.errorMessage.value;
       }
     } catch (e) {
-      // Show error message
-      Get.snackbar(
-        'Error',
-        'Gagal mengajukan peminjaman: ${e.toString()}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
-        duration: const Duration(seconds: 3),
-        icon: const Icon(Icons.error_outline, color: Colors.white),
-      );
+      Get.snackbar('Gagal', e.toString(), backgroundColor: Colors.red, colorText: Colors.white);
+    } finally {
+      isLoading.value = false;
     }
   }
 
-  // Reset form
-  void resetForm() {
-    selectedAlatList.clear();
-    tanggalPinjam.value = null;
-    tanggalKembali.value = null;
+  String getSelectedCountText() {
+    int totalQty = 0;
+    selectedItems.values.forEach((qty) => totalQty += qty);
+    return totalQty > 0 ? '$totalQty item dipilih' : 'Belum ada alat dipilih';
   }
 
-  // Get selected count text
-  String getSelectedCountText() {
-    final count = selectedAlatList.length;
-    return count > 0 ? '$count alat dipilih' : 'Belum ada alat dipilih';
+  List<Alat> getDistinctAlatList() {
+    return nameToAlat.values.toList();
   }
 }

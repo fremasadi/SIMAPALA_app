@@ -66,7 +66,7 @@ void showPembayaranListBottomSheet(
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
-                            '${pembayaran.metode.toUpperCase()} • ${_formatDate(pembayaran.tanggalBayar)}',
+                            '${(pembayaran.metode ?? 'Midtrans').toUpperCase()} • ${_formatDate(pembayaran.createdAt)}',
                           ),
                           trailing: Text(
                             pembayaran.status,
@@ -122,10 +122,17 @@ String _formatRupiah(int value) {
 Color _statusColor(String status) {
   switch (status.toLowerCase()) {
     case 'diterima':
+    case 'settlement':
+    case 'capture':
       return Colors.green;
+    case 'menunggu':
     case 'pending':
       return Colors.orange;
     case 'ditolak':
+    case 'expire':
+    case 'cancel':
+    case 'failure':
+    case 'deny':
       return Colors.red;
     default:
       return Colors.grey;
